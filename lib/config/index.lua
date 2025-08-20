@@ -6,12 +6,8 @@ nox.config.class = {};
 nox.config.default = {};
 
 nox.config.class.config = require 'lib.config.classes.Config';
-
 nox.config.register = require 'lib.config.register';
-nox.config.register_sub = require 'lib.config.register_sub';
-nox.config.get_valid = require 'lib.config.get_valid';
-nox.config.get = nox.config.get_valid;
-nox.config.get_valid_sub = require 'lib.config.get_valid_sub';
-nox.config.get_sub = nox.config.get_valid_sub;
+
+Config = nox.config.register('Global');
 
 return nox.config;
