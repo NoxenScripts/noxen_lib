@@ -1,6 +1,6 @@
-local current = nox.convar.get_value('noxen_lib_main_color');
+local current <const> = nox.convar.get_value('noxen_lib_main_color');
 
-local client_colors = {
+local client_colors <const> = {
 
     blue = '~b~',
     green = '~g~',
@@ -13,7 +13,7 @@ local client_colors = {
 
 };
 
-local server_colors = {
+local server_colors <const> = {
 
     blue = '^4',
     green = '^2',
@@ -43,7 +43,7 @@ end
 ---@param is_console? boolean
 return function(color, is_console)
 
-    local valid_current = get_valid_current(is_console);
+    local valid_current <const> = get_valid_current(is_console);
 
     if (nox.is_server) then
         return type(server_colors[color]) == 'string' and server_colors[color] or valid_current;
