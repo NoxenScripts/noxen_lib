@@ -1,12 +1,12 @@
-local InternalZone = require 'internal.game.zone.InternalZone';
+local InternalZone <const> = require 'internal.game.zone.InternalZone';
 
 ---@type ZoneService
-local ZoneService = Class.singleton('ZoneService', 'EventEmitter', function(class)
+local ZoneService <const> = Class.singleton('ZoneService', 'EventEmitter', function(class)
 
     ---@class ZoneService: BaseObject
     ---@field public zones table<string, InternalZone>
     ---@field private resources table<string, string[]>
-    local self = class;
+    local self <const> = class;
 
     function self:Constructor()
         self:super();

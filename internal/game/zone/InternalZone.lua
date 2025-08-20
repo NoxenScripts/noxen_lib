@@ -6,7 +6,7 @@
 ---@field public size number
 ---@field public metadata Map
 ---@overload fun(id: string, resource: string): InternalZone
-local InternalZone = Class.new "InternalZone";
+local InternalZone <const> = Class.new "InternalZone";
 
 ---@param id string
 ---@param resource string

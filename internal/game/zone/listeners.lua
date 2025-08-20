@@ -14,7 +14,7 @@ nox.events.on(eCitizenFXEvents.onResourceStop, function(_, resource)
 end);
 
 nox.events.on(eLibEvents.zoneUpdate, function(_, zoneId, key, value)
-    local zone = zoneService:Get(zoneId);
+    local zone <const> = zoneService:Get(zoneId);
 
     if (typeof(zone) == 'InternalZone') then
         zone[key] = value;
@@ -22,7 +22,7 @@ nox.events.on(eLibEvents.zoneUpdate, function(_, zoneId, key, value)
 end);
 
 nox.events.on(eLibEvents.zoneRemove, function(_, zoneId)
-    local zone = zoneService:Get(zoneId);
+    local zone <const> = zoneService:Get(zoneId);
 
     if (typeof(zone) == 'InternalZone') then
         zoneService:Remove(zoneId);
@@ -31,9 +31,9 @@ end);
 
 async(function()
     while true do
-        local zones = zoneService:GetAll();
-        local ped = PLAYER_PED_ID();
-        local coords = GET_ENTITY_COORDS(ped);
+        local zones <const> = zoneService:GetAll();
+        local ped <const> = PLAYER_PED_ID();
+        local coords <const> = GET_ENTITY_COORDS(ped);
 
         for zoneId, zone in pairs(zones) do
             if (typeof(zone) ~= 'InternalZone') then goto continue; end
@@ -42,7 +42,7 @@ async(function()
                 goto continue;
             end
 
-            local distance = #(coords - zone.position);
+            local distance <const> = #(coords - zone.position);
 
             if (distance <= zone.size) then
                 if (not zone.active) then
