@@ -19,7 +19,8 @@ end
 ---@vararg any
 ---@overload fun(eventName: string, callback: fun(...: any), ...: any)
 local function safe_callback(eventName, callback, ...)
-    local success, result = pcall(callback, ...);
+    local success <const>, result <const> = pcall(callback, ...);
+
     if (not success) then
         console.err(("An error occured while executing event ^7(%s%s^7)^0, stack: ^7(^1%s^7)"):format(nox.color.get_current(nil, true), eventName, result));
     end
@@ -29,12 +30,18 @@ end
 ---@param callback fun(src: number, response: fun(...: any), ...: any) | fun(response: fun(...: any), ...: any)
 ---@param ... any
 local function register_callback(eventName, callback, ...)
-    if (is_callback_valid(callback)) then
-        if (is_callback_valid(callbacks[eventName])) then
-            console.warn(("Event callback ^7(%s%s^7)^0 already has a callback registered, overwriting..."):format(nox.color.get_current(nil, true) ,eventName));
-        end
-        callbacks[eventName] = callback;
+    if (not is_callback_valid(callback)) then
+        console.err(('An error occured while registering event callback ^7(%s%s^7)^0, stack: ^7(^1Invalid callback^7)'):format(nox.color.get_current(nil, true), eventName or 'nil'));
+        return;
     end
+
+    if (not is_callback_valid(callbacks[eventName])) then
+        console.debug(('Registering event callback ^7(%s%s^7)^0'):format(nox.color.get_current(nil, true), eventName or 'nil'));
+    else
+        console.warn(('Event callback ^7(%s%s^7)^0 already has a callback registered, overwriting...'):format(nox.color.get_current(nil, true), eventName));
+    end
+
+    callbacks[eventName] = callback;
 end
 
 ---@param eventName string
@@ -42,39 +49,35 @@ end
 ---@param src number
 ---@vararg any
 local function emit_callback(eventName, callback, src, ...)
+    local args <const> = {...};
 
-    local args = {...};
-
-    if (is_callback_valid(callback)) then
-
-        requests[current_id] = function(...)
-
-            local success, result = pcall(callback, ...);
-
-            if (not success) then
-                console.err(("An error occured while executing event ^7(%s%s^7)^0, stack: ^7(^1%s^7)"):format(nox.color.get_current(nil, true) ,eventName, result));
-            end
-
-        end;
-
-        if (nox.is_server) then
-            nox.events.emit.net(eLibEvents.emitCallback, src, eventName, current_id, table.unpack(args));
-        else
-            nox.events.emit.net(eLibEvents.emitCallback, eventName, current_id, src, table.unpack(args));
-        end
-
-        increment_request_id();
-
-    else
-        console.err(('An error occured while emitting event callback ^7(%s%s^7)^0, stack: ^7(^1Invalid callback^7)'):format(nox.color.get_current(nil, true) ,eventName or 'nil'));
+    if (not is_callback_valid(callback)) then
+        console.err(('An error occured while emitting event callback ^7(%s%s^7)^0, stack: ^7(^1Invalid callback^7)'):format(
+            nox.color.get_current(nil, true), eventName or 'nil'
+        ));
+        return;
     end
 
+    requests[current_id] = function(...)
+        local success <const>, result <const> = pcall(callback, ...);
+
+        if (not success) then
+            console.err(("An error occured while executing event ^7(%s%s^7)^0, stack: ^7(^1%s^7)"):format(nox.color.get_current(nil, true) ,eventName, result));
+        end
+    end;
+
+    if (nox.is_server) then
+        nox.events.emit.net(eLibEvents.emitCallback, src, eventName, current_id, table.unpack(args));
+    else
+        nox.events.emit.net(eLibEvents.emitCallback, eventName, current_id, src, table.unpack(args));
+    end
+
+    increment_request_id();
 end
 
 RegisterNetEvent(eLibEvents.emitCallback, function(eventName, requests_id, ...)
-
-    local src = source;
-    local args = {...};
+    local src <const> = source;
+    local args <const> = {...};
 
     if (nox.is_server) then
         safe_callback(eventName, callbacks[eventName], src, function(...)
@@ -85,13 +88,12 @@ RegisterNetEvent(eLibEvents.emitCallback, function(eventName, requests_id, ...)
             nox.events.emit.net(eLibEvents.receiveCallback, eventName, requests_id, ...);
         end, table.unpack(args));
     end
-
 end);
 
 RegisterNetEvent(eLibEvents.receiveCallback, function(eventName, requests_id, ...)
-
     if (not nox.is_server) then
-        local invoking = GetInvokingResource();
+        local invoking <const> = GetInvokingResource();
+
         if (invoking ~= nil) then
             nox.game.crash(eLibEvents.receiveCallback);
         end
@@ -99,7 +101,6 @@ RegisterNetEvent(eLibEvents.receiveCallback, function(eventName, requests_id, ..
 
     safe_callback(eventName, requests[requests_id], ...);
     requests[requests_id] = nil;
-
 end);
 
 exports('register_callback', register_callback);
