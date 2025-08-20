@@ -1,4 +1,4 @@
-local enums = {};
+local enums <const> = {};
 
 enums.libEvents = require 'enums.eLibEvents';
 enums.hudColorIndex = require 'enums.eHUDColorIndex';

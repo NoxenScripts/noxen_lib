@@ -1,6 +1,5 @@
 ---@enum eHUDColorIndex
 eHUDColorIndex = {
-
     PURE_WHITE = 0,
     WHITE = 1,
     BLACK = 2,
@@ -235,7 +234,6 @@ eHUDColorIndex = {
     PLACEHOLDER_08 = 231,
     PLACEHOLDER_09 = 232,
     PLACEHOLDER_10 = 233
-
 };
 
 return eHUDColorIndex;

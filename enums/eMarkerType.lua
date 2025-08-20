@@ -1,6 +1,5 @@
 ---@enum eMarkerType
 eMarkerType = {
-
     ---<img src="https://docs.fivem.net/markers/0.png?raw=true" height="200">
     UpsideDownCone = 0,
     ---<img src="https://docs.fivem.net/markers/1.png?raw=true" height="200">
@@ -89,7 +88,6 @@ eMarkerType = {
     SawbladeSymbol = 42,
     ---<img src="https://docs.fivem.net/markers/43.png?raw=true" height="200">
     undefined2 = 43
-
 };
 
 return eMarkerType;
