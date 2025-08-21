@@ -1,4 +1,4 @@
-local FREEZE_ENTITY_POSITION = FreezeEntityPosition;
+local FREEZE_ENTITY_POSITION <const> = FreezeEntityPosition;
 
 ---@param entity number
 ---@param state boolean

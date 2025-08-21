@@ -2,9 +2,9 @@
 console = {};
 
 -- Cache table.insert as local because it's faster
-local table_insert = table.insert;
-local _print = print;
-local logTypes = {
+local table_insert <const> = table.insert;
+local _print <const> = print;
+local logTypes <const> = {
     ["INFO"] = "^4INFO",
     ["WARN"] = "^3WARN",
     ["ERROR"] = "^1ERROR",
@@ -16,10 +16,10 @@ local logTypes = {
 ---@param obj any
 ---@return string
 local function get_type_name(obj)
-    local is_table = typeof(obj) == "table";
-    local is_class = is_class(obj);
-    local is_singleton = is_singleton(obj);
-    local is_class_instance = is_instance(obj);
+    local is_table <const> = typeof(obj) == "table";
+    local is_class <const> = is_class(obj);
+    local is_singleton <const> = is_singleton(obj);
+    local is_class_instance <const> = is_instance(obj);
 
     return is_table and 'table'
         or is_class and ('class \'%s\''):format(get_class_name(obj))
@@ -38,17 +38,15 @@ end
 ---@param tbl table
 ---@param show_metatable boolean
 local function dump_table(tbl, show_metatable)
-
-    local data, buffer = {}, {};
+    local data <const>, buffer <const> = {}, {};
 
     -- Internal recursive function
     local function dump_table_recursive(object, indentation, show_meta)
-
-        local object_type = type(object);
+        local object_type <const> = type(object);
 
         -- If it's a table and was not outputted yet
         if (is_table(object) and not data[object]) then
-            local object_metatable = getmetatable(object);
+            local object_metatable <const> = getmetatable(object);
 
             if (object_metatable and show_meta) then
                 dump_table_recursive(object_metatable, indentation, show_meta);
@@ -57,7 +55,7 @@ local function dump_table(tbl, show_metatable)
             data[object] = true;
 
             -- Stores all keys in another table, sorting it
-            local keys = {};
+            local keys <const> = {};
 
             for key in pairs(object) do
                 table_insert(keys, key);
@@ -79,8 +77,7 @@ local function dump_table(tbl, show_metatable)
 
             -- For each member of the table, recursively outputs it
             for _, key in ipairs(keys) do
-
-                local formatted_key = type(key) == "number" and tostring(key) or '^7"^5' .. tostring(key) .. '^7"^0';
+                local formatted_key <const> = type(key) == "number" and tostring(key) or '^7"^5' .. tostring(key) .. '^7"^0';
 
                 -- Appends the Key with indentation
                 table_insert(buffer, "\n" .. string.rep(" ", indentation * 4) .. formatted_key .. " = ");
@@ -98,8 +95,7 @@ local function dump_table(tbl, show_metatable)
             -- Adds the closing bracket
             table_insert(buffer, "\n" .. string.rep(" ", indentation * 4) .. "^7}^0");
         else
-
-            local obj = tostring(object);
+            local obj <const> = tostring(object);
             local obj_msg = "";
 
             if (object_type == "string") then
@@ -121,7 +117,6 @@ local function dump_table(tbl, show_metatable)
         end
 
         return data, buffer;
-
     end
 
     -- Main call
@@ -129,7 +124,6 @@ local function dump_table(tbl, show_metatable)
 
     -- After all, concats the results
     return table.concat(buffer);
-
 end
 
 ---@private
@@ -139,12 +133,10 @@ end
 ---@vararg
 ---@return string | boolean
 local function format_message(logType, ...)
-
     local msg = string.format("^7(%s^7)^0 =>", logTypes[logType]);
-    local args = { ... };
+    local args <const> = { ... };
 
     if (#args > 0) then
-
         for i = 1, #args do
 
             if (type(args[i]) == 'table') then
@@ -154,30 +146,24 @@ local function format_message(logType, ...)
             end
 
         end
-
         return string.format("%s^0", msg);
-
-    else
-        return false;
     end
-
+    return false;
 end
 
 ---@private
 ---@param logType string
 ---@param ... any
 local function send_message(logType, ...)
-
-    local success, msg = pcall(format_message, logType, ...);
+    local success <const>, msg <const> = pcall(format_message, logType, ...);
 
     if (success) then
         if (type(msg) == "string") then
             _print(msg);
         end
-    else
-        console.err(("An error occured when trying to trace content, stack: ^7(^1%s^7)"):format(msg));
+        return;
     end
-
+    console.err(("An error occured when trying to trace content, stack: ^7(^1%s^7)"):format(msg));
 end
 
 ---@vararg any
@@ -197,11 +183,9 @@ end
 
 ---@varargs any
 function console.debug(...)
-
     if (nox.debug) then
         return send_message("DEBUG", ...);
     end
-
 end
 
 ---@varargs any
@@ -212,7 +196,7 @@ end
 print = console.log;
 _G._print = _print;
 
-local resource = GetCurrentResourceName();
+local resource <const> = GetCurrentResourceName();
 
 AddEventHandler(('__internal_console_log_%s'):format(resource), console.log);
 AddEventHandler(('__internal_console_warn_%s'):format(resource), console.warn);

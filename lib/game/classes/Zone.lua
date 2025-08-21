@@ -1,7 +1,7 @@
-local Radius = require 'lib.game.classes.ZoneRadius';
-local PLAYER_PED_ID = PlayerPedId;
-local GET_ENTITY_COORDS = GetEntityCoords;
-local zones = {};
+local Radius <const> = require 'lib.game.classes.ZoneRadius';
+local PLAYER_PED_ID <const> = PlayerPedId;
+local GET_ENTITY_COORDS <const> = GetEntityCoords;
+local zones <const> = {};
 
 ---@class Zone : EventEmitter
 ---@field public id string
@@ -14,7 +14,7 @@ local zones = {};
 ---@field public markers Map
 ---@field public metadata Map
 ---@overload fun(): Zone
-local Zone = Class.extends('Zone', 'EventEmitter');
+local Zone <const> = Class.extends('Zone', 'EventEmitter');
 
 function Zone:Constructor()
     assert(not nox.is_server, 'Zone class is only available on client.');

@@ -18,11 +18,9 @@ end
 ---@param coords vector3 | vector4
 ---@param no_offset boolean
 return function(entity, coords, no_offset)
-
     if (not nox.entity.does_exist(entity)) then return; end
 
     if (type(coords) == 'table' or type(coords) == 'vector3' or type(coords) == 'vector4') then
-
         if (not are_coords_valid(coords)) then return; end
 
         if (type(coords.w) == 'number') then
@@ -30,7 +28,5 @@ return function(entity, coords, no_offset)
         end
 
         set_coords(entity, coords, no_offset);
-
     end
-
 end

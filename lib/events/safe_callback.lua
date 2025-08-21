@@ -3,7 +3,7 @@
 ---@vararg any
 ---@overload fun(eventName: string, callback: fun(...: any), ...: any)
 return function(eventName, callback, ...)
-    local success, result = pcall(callback, ...);
+    local success <const>, result <const> = pcall(callback, ...);
     if (not success) then
         console.err(("An error occured while executing event ^7(^4%s^7)^0, stack: ^7(^1%s^7)"):format(eventName, result));
     end

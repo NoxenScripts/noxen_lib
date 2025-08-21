@@ -1,9 +1,8 @@
 ---@class MarkerCircle: Marker
-local MarkerCircle = Class.extends('MarkerCircle', 'Marker');
+local MarkerCircle <const> = Class.extends('MarkerCircle', 'Marker');
 
 ---@private
 function MarkerCircle:Constructor()
-
     self:super();
     self:SetType(eMarkerType.HorizontalCircleSkinny_Arrow);
     self:SetScale(vector3(0.5, 0.5, 0.5));
@@ -13,7 +12,6 @@ function MarkerCircle:Constructor()
     self:SetBobUpAndDown(false);
     self:SetFaceCamera(false);
     self:SetRotate(true);
-
 end
 
 return MarkerCircle;

@@ -1,9 +1,8 @@
-local events = EventEmitter();
+local events <const> = EventEmitter();
 
 if (not nox.is_server) then
-
-    local NETWORK_IS_PLAYER_ACTIVE = NetworkIsPlayerActive;
-    local player_id = PlayerId();
+    local NETWORK_IS_PLAYER_ACTIVE <const> = NetworkIsPlayerActive;
+    local player_id <const> = PlayerId();
 
     async(function()
         while true do

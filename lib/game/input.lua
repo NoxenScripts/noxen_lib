@@ -3,12 +3,9 @@
 ---@param text string
 ---@return string | number
 return function(textEntry, maxLength, text)
-
     assert(not nox.is_server, 'This function can only be called on the client.');
-
     AddTextEntry('FMMC_KEY_TIP1', textEntry);
     DisplayOnscreenKeyboard(
-
         1,
         "FMMC_KEY_TIP1",
         "",
@@ -17,7 +14,6 @@ return function(textEntry, maxLength, text)
         nil,
         nil,
         maxLength or 10
-
     );
 
     while (UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2) do
@@ -26,11 +22,13 @@ return function(textEntry, maxLength, text)
     end
 
     if (UpdateOnscreenKeyboard() ~= 2) then
-        local result = GetOnscreenKeyboardResult();
+        local result <const> = GetOnscreenKeyboardResult();
         async.wait(500);
         if (result) then
-            if (tonumber(result)) then
-                return tonumber(result);
+            local numberResult <const> = tonumber(result);
+
+            if (numberResult) then
+                return numberResult;
             end
             return result;
         end

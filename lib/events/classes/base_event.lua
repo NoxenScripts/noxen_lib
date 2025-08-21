@@ -1,4 +1,4 @@
-local events = {};
+local events <const> = {};
 
 ---@class noxen.lib.events.base_event: BaseObject
 ---@field public name string
@@ -7,7 +7,7 @@ local events = {};
 ---@field public callback fun(...: any)
 ---@field private type string
 ---@overload fun(): noxen.lib.events.base_event
-local Event = Class.new 'noxen.lib.events.base_event';
+local Event <const> = Class.new 'noxen.lib.events.base_event';
 
 function Event:Constructor()
 	self.id = uuid();

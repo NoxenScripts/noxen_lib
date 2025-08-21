@@ -11,7 +11,6 @@ end
 ---@param callback fun(...: vararg)
 ---@return table
 function EventEmitter:on(eventName, callback)
-
     if (type(eventName) ~= "string") then
         return error("EventEmitter:on(): Invalid event name", 0);
     end
@@ -24,40 +23,32 @@ function EventEmitter:on(eventName, callback)
         self.events[eventName] = {};
     end
 
-    local id = #self.events[eventName] + 1;
+    local id <const> = #self.events[eventName] + 1;
     self.events[eventName][id] = function(...)
-
-        local args = {...};
+        local args <const> = {...};
 
         async(function()
-
             if (type(callback) == "function") then
-
-                local success, result = pcall(callback, table.unpack(args));
+                local success <const>, result <const> = pcall(callback, table.unpack(args));
 
                 if not (success) then
                     console.err(("An error occured while executing event ^7(^4%s^7)^0, stack: ^7(^1%s^7)"):format(eventName, result));
                 end
-
             else
                 console.err(("An error occured while executing event ^7(^4%s^7)^0, stack: ^7(^1%s^7)"):format(eventName, "Callback is not a function"));
             end
-
         end);
-
     end;
 
     return {
         name = eventName,
         id = id
     };
-
 end
 
 ---@param eventName string
 ---@vararg any
 function EventEmitter:emit(eventName, ...)
-
     if (type(eventName) ~= "string") then
         return error("EventEmitter:emit(): Invalid event name", 3);
     end
@@ -69,12 +60,10 @@ function EventEmitter:emit(eventName, ...)
             end
         end
     end
-
 end
 
 ---@param eventData table
 function EventEmitter:remove(eventData)
-
     if (type(eventData) ~= "table") then
         return error("EventEmitter:remove(): Invalid eventHandler", 3);
     end
@@ -82,7 +71,6 @@ function EventEmitter:remove(eventData)
     if (self.events[eventData.name]) then
         self.events[eventData.name][eventData.id] = nil;
     end
-
 end
 
 return EventEmitter;

@@ -1,5 +1,5 @@
-local classes = {};
-local singletons = {};
+local classes <const> = {};
+local singletons <const> = {};
 
 ---@param v any
 ---@return string
@@ -54,29 +54,25 @@ end
 
 ---@param self BaseObject
 local function get_super_list(self)
-
-    local list = {};
-
+    local list <const> = {};
     local function recursive(_self)
-        local metatable = getmetatable(_self);
-        local super = metatable.__super;
+        local metatable <const> = getmetatable(_self);
+        local super <const> = metatable.__super;
         if (super) then
             table.insert(list, super);
             return recursive(super);
         end
         return list;
     end
-
     return recursive(self);
-
 end
 
 ---@param class BaseObject
 ---@return BaseObject | nil
 local function class_super(class)
     assert(type(class) == 'table', "Attempt to get super from an invalid class");
-	local metatable = getmetatable(class);
-	local meta_super = metatable.__super;
+	local metatable <const> = getmetatable(class);
+	local meta_super <const> = metatable.__super;
 	if (meta_super) then
 		return meta_super;
 	end
@@ -86,15 +82,14 @@ end
 ---@param class BaseObject
 ---@return table
 local function class_build(class)
-
     assert(type(class) == 'table', "Attempt to build from an invalid class");
 
-    local metatable = getmetatable(class);
+    local metatable <const> = getmetatable(class);
 
     assert(type(metatable) == 'table', "Attempt to build from an invalid class");
     assert(singletons[metatable.__name] == nil, "Attempt to build instance from a singleton");
 
-    local super = class_super(class);
+    local super <const> = class_super(class);
 
     return setmetatable({}, {
         __index = class;
@@ -120,17 +115,13 @@ end
 ---@vararg
 ---@return BaseObject
 local function class_instance(class, ...)
-
 	if (class) then
-
-		local instance = class_build(class);
-
-        local metatable = getmetatable(instance);
-        local metasuper = getmetatable(metatable.__super);
+		local instance <const> = class_build(class);
+        local metatable <const> = getmetatable(instance);
+        local metasuper <const> = getmetatable(metatable.__super);
 
 		if (type(instance["Constructor"]) == "function") then
-
-            local success, err = pcall(instance["Constructor"], instance, ...);
+            local success <const>, err <const> = pcall(instance["Constructor"], instance, ...);
 
             if (not success) then
                 console.err("^1Constructor of class ^7(^6" .. metatable.__name .. "^7)^1 has triggered an error^0: ^7(^6" .. err .. "^7)");
@@ -138,23 +129,18 @@ local function class_instance(class, ...)
             end
 
             if (metasuper.__name ~= "BaseObject") then
-
                 if (metatable.__super_called == 0) then
                     console.err("^1Constructor ^7(^6" .. metatable.__name .. "^7)^1 not called super().^0");
                     return nil;
                 end
-
             end
-
         elseif (metatable.__type ~= "singleton" or (metatable.__type == "singleton" and metasuper.__name ~= 'BaseObject')) then
             console.err("^1Constructor ^7(^6" .. metatable.__name .. "^7)^1 not found.^0");
             return nil;
 		end
 
 		return instance;
-
 	end
-
 end
 
 ---@param name string
@@ -188,18 +174,17 @@ end
 ---@param callback? fun(class: BaseObject): table
 ---@return BaseObject
 local function class_prepare(name, fromClass, callback)
-
-    local _class = type(fromClass) == "string" and classes[fromClass] or fromClass;
+    local _class <const> = type(fromClass) == "string" and classes[fromClass] or fromClass;
 
     assert(type(_class) == 'table', "Attempt to extends from an invalid class");
     assert(singletons[name] == nil, "Attempt to extends from a singleton");
 
-    local tbl = type(callback) == "function" and callback({}) or {};
-    local metatable = getmetatable(_class);
+    local tbl <const> = type(callback) == "function" and callback({}) or {};
+    local metatable <const> = getmetatable(_class);
 
     classes[name] = prepare(name, _class, tbl, "instance", metatable);
 
-    local metainstance = getmetatable(classes[name]);
+    local metainstance <const> = getmetatable(classes[name]);
 
     console.debug(('Created class ^6%s^0 from class ^3%s^0'):format(metainstance.__name, metatable.__name));
 
@@ -213,26 +198,24 @@ end
 ---@param callback fun(class: BaseObject): table
 ---@vararg any
 local function singleton_prepare(name, fromClass, callback, ...)
-
-    local _class = type(fromClass) == "string" and classes[fromClass] or fromClass;
+    local _class <const> = type(fromClass) == "string" and classes[fromClass] or fromClass;
     assert(type(_class) == 'table', ("Attempt to extends from an invalid class '%s'"):format(type(fromClass)));
 
-    local metatable = getmetatable(_class);
+    local metatable <const> = getmetatable(_class);
     assert(callback, ("Attempt to create a singleton '%s' without callback"):format(name));
 
-    local tbl = callback({});
+    local tbl <const> = callback({});
 
     assert(type(tbl) == 'table', ("Attempt to create a singleton '%s' without return."):format(name));
 
     classes[name] = prepare(name, _class, tbl, "singleton", metatable);
     singletons[name] = classes[name](...);
 
-    local metainstance = getmetatable(singletons[name]);
+    local metainstance <const> = getmetatable(singletons[name]);
 
     console.debug(('Created singleton ^6%s^0 from class ^3%s^0'):format(metainstance.__name, metatable.__name));
 
     return singletons[name];
-
 end
 
 --- Callback required
@@ -291,21 +274,21 @@ end
 ---@param var any
 ---@return string | nil
 function Class.GetName(var)
-    local metatable = Class.GetMetatable(var);
+    local metatable <const> = Class.GetMetatable(var);
     return metatable and metatable.__name or nil;
 end
 
 ---@param var any
 ---@return boolean
 function Class.IsValid(var)
-    local metatable = Class.GetMetatable(var);
+    local metatable <const> = Class.GetMetatable(var);
     return metatable and metatable.__type == "class" or false;
 end
 
 ---@param var any
 ---@return boolean
 function Class.IsInstance(var)
-    local metatable = Class.GetMetatable(var);
+    local metatable <const> = Class.GetMetatable(var);
     return metatable and metatable.__type == "instance" or false;
 end
 
@@ -313,21 +296,18 @@ end
 ---@param class BaseObject | string
 ---@return boolean
 function Class.IsInstanceOf(var, class)
-
-    local _class = type(class) == "string" and Class.require(class) or class;
+    local _class <const> = type(class) == "string" and Class.require(class) or class;
 
     if (Class.IsInstance(var)) then
         return var:IsInstanceOf(Class.GetName(_class));
     end
-
     return false;
-
 end
 
 ---@param var any
 ---@return boolean
 function Class.IsSingleton(var)
-    local metatable = Class.GetMetatable(var);
+    local metatable <const> = Class.GetMetatable(var);
     return metatable and metatable.__type == "singleton" or false;
 end
 
@@ -358,7 +338,7 @@ end
 ---@private
 ---@param name string
 function BaseObject:SetToString(name)
-    local metatable = self:GetMetatable();
+    local metatable <const> = self:GetMetatable();
     metatable.__tostring = function()
         return name;
     end;
@@ -372,20 +352,17 @@ end
 
 ---@vararg any
 function BaseObject:super(...)
-
-    local metatable = getmetatable(self);
-    local list = get_super_list(self);
+    local metatable <const> = getmetatable(self);
+    local list <const> = get_super_list(self);
     metatable.__super_called = metatable.__super_called + 1;
-    local class = list[metatable.__super_called];
+    local class <const> = list[metatable.__super_called];
 
     assert(class, "BaseObject:super(): Class not found");
 
     if (type(class["Constructor"]) == "function") then
         return class["Constructor"](self, ...);
     end
-
     return nil;
-
 end
 
 ---@private
@@ -394,17 +371,14 @@ end
 ---@vararg any
 ---@return any
 function BaseObject:CallParentMethod(methodName, ...)
-
-    local metatable = getmetatable(self);
-    local class = metatable.__super;
+    local metatable <const> = getmetatable(self);
+    local class <const> = metatable.__super;
     assert(class, "BaseObject:CallParentMethod(): Class not found");
 
     if (type(class[methodName]) == "function") then
         return class[methodName](self, ...);
     end
-
     return nil;
-
 end
 
 ---@private
@@ -428,18 +402,16 @@ end
 ---@param class_name string | BaseObject
 ---@return boolean
 function BaseObject:IsInstanceOf(class_name)
-
-    local _class = type(class_name) == "string" and classes[class_name] or class_name;
+    local _class <const> = type(class_name) == "string" and classes[class_name] or class_name;
 
     if(type(_class) ~= "table") then return false; end
-    local class_metatable = classes[class_name]:GetMetatable();
+    local class_metatable <const> = classes[class_name]:GetMetatable();
 
-    local _class_name = class_metatable and class_metatable.__name or nil;
+    local _class_name <const> = class_metatable and class_metatable.__name or nil;
     if (not _class_name) then return false; end
 
-    local metatable = self:GetMetatable();
+    local metatable <const> = self:GetMetatable();
     return class_name == metatable.__name or false;
-
 end
 
 ---@private

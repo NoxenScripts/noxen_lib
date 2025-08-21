@@ -4,7 +4,7 @@
 ---@field public callback noxen.lib.events.emit.callback
 ---@overload fun(eventName: string, src: number | boolean, ...: any): void
 ---@overload fun(eventName: string, ...: any): void
-local emit = table.overload(TriggerEvent, {
+local emit <const> = table.overload(TriggerEvent, {
     ---@param eventName string
     ---@param src number | boolean
     ---@vararg any

@@ -1,15 +1,13 @@
-local IS_MODEL_IN_CDIMAGE = IsModelInCdimage;
-local HAS_MODEL_LOADED = HasModelLoaded;
-local REQUEST_MODEL = RequestModel;
+local IS_MODEL_IN_CDIMAGE <const> = IsModelInCdimage;
+local HAS_MODEL_LOADED <const> = HasModelLoaded;
+local REQUEST_MODEL <const> = RequestModel;
 
 ---@async
 ---@param model string | number
 ---@return number
 return function(model)
-
     assert(not nox.is_server, 'This function can only be called on the client.');
-
-    local _model = nox.game.hash(model);
+    local _model <const> = nox.game.hash(model);
 
     if (IS_MODEL_IN_CDIMAGE(_model)) then
         while (not HAS_MODEL_LOADED(_model)) do
@@ -20,5 +18,4 @@ return function(model)
     end
 
     return -1;
-
 end

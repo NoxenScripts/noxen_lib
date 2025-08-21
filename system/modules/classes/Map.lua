@@ -47,7 +47,7 @@ end
 ---@param callback? fun(key: string): void
 ---@return table<string, any>
 function Map:keys(callback)
-	local result = {};
+	local result <const> = {};
 	for key, _ in pairs(self.data) do
 		if (is_function(callback)) then
 			callback(key);
@@ -60,7 +60,7 @@ end
 ---@param callback? fun(value: any): void
 ---@return table<string, any>
 function Map:values(callback)
-	local result = {};
+	local result <const> = {};
 	for _, value in pairs(self.data) do
 		if (is_function(callback)) then
 			callback(value);
@@ -72,7 +72,7 @@ end
 
 ---@param callback fun(key: string, value: any): boolean
 function Map:filter(callback)
-	local result = Map();
+	local result <const> = Map();
 	for key, value in pairs(self.data) do
 		if (callback(key, value)) then
 			result:set(key, value);
@@ -95,7 +95,7 @@ end
 ---@param callback fun(key: string, value: any): any
 ---@return Map
 function Map:map(callback)
-	local result = Map();
+	local result <const> = Map();
 	for key, value in pairs(self.data) do
 		result:set(key, callback(key, value));
 	end

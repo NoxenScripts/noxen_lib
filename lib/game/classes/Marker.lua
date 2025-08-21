@@ -1,4 +1,4 @@
-local DRAW_MARKER = DrawMarker;
+local DRAW_MARKER <const> = DrawMarker;
 
 ---@class Marker: BaseObject
 ---@field private id string
@@ -16,7 +16,7 @@ local DRAW_MARKER = DrawMarker;
 ---@field public textureName string
 ---@field public drawOnEnts boolean
 ---@overload fun(eMarkerType?: eMarkerType, position?: vector3, direction?: vector3, rotation?: vector3, scale?: vector3, color?: Color, bobUpAndDown?: boolean, faceCamera?: boolean, rotate?: boolean, textureDict?: string, textureName?: string, drawOnEnts?: boolean): Marker
-local Marker = Class.new 'Marker';
+local Marker <const> = Class.new 'Marker';
 
 ---@private
 ---@param eMarkerType? eMarkerType
@@ -31,8 +31,11 @@ local Marker = Class.new 'Marker';
 ---@param textureDict? string
 ---@param textureName? string
 ---@param drawOnEnts? boolean
-function Marker:Constructor(eMarkerType, position, direction, rotation, scale, color, bobUpAndDown, faceCamera, rotate, textureDict, textureName, drawOnEnts)
-
+function Marker:Constructor(eMarkerType, position, direction,
+    rotation, scale, color,
+    bobUpAndDown, faceCamera, rotate,
+    textureDict, textureName, drawOnEnts
+)
     self.id = nox.uuid();
     self.type = eMarkerType;
     self.position = position;
@@ -47,7 +50,6 @@ function Marker:Constructor(eMarkerType, position, direction, rotation, scale, c
     self.textureDict = textureDict;
     self.textureName = textureName;
     self.drawOnEnts = drawOnEnts;
-
 end
 
 ---@param eMarkerType eMarkerType
@@ -125,7 +127,6 @@ end
 ---Draw the marker with the current settings
 function Marker:Draw()
     DRAW_MARKER(
-
         self.type,
         self.position.x,
         self.position.y,
@@ -150,8 +151,8 @@ function Marker:Draw()
         self.textureDict,
         self.textureName,
         self.drawOnEnts
-
     );
+    return self;
 end
 
 return Marker;

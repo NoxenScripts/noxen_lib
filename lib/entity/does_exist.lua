@@ -1,4 +1,4 @@
-local DOES_ENTITY_EXIST = DoesEntityExist;
+local DOES_ENTITY_EXIST <const> = DoesEntityExist;
 
 ---@param entity number
 ---@return boolean

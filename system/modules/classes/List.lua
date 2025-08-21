@@ -69,7 +69,7 @@ end
 ---@param callback fun(index: number, value: any): any
 ---@return List
 function List:list(callback)
-	local result = List();
+	local result <const> = List();
 	for i = 1, #self.data do
 		result:add(callback(i, self.data[i]));
 	end

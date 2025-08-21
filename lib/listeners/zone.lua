@@ -1,8 +1,7 @@
 if (nox.is_server) then return; end
 
 nox.events.on.internal(eLibEvents.zoneStateChange, function(_, zoneId, key, value)
-
-    local zone = nox.game.classes.zone.Get(zoneId);
+    local zone <const> = nox.game.classes.zone.Get(zoneId);
 
     if (zone ~= nil) then
         zone[key] = value;
@@ -16,5 +15,4 @@ nox.events.on.internal(eLibEvents.zoneStateChange, function(_, zoneId, key, valu
             end
         end
     end
-
 end);

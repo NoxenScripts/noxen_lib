@@ -1,4 +1,4 @@
-local REMOVE_EVENT_HANDLER = RemoveEventHandler;
+local REMOVE_EVENT_HANDLER <const> = RemoveEventHandler;
 
 ---@param eventData eventData
 return function(eventData)

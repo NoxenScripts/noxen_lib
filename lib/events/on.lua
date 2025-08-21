@@ -1,6 +1,6 @@
-local GET_INVOKING_RESOURCE = GetInvokingResource;
-local base_event = require 'lib.events.classes.base_event';
-local net_event = require 'lib.events.classes.net_event';
+local GET_INVOKING_RESOURCE <const> = GetInvokingResource;
+local base_event <const> = require 'lib.events.classes.base_event';
+local net_event <const> = require 'lib.events.classes.net_event';
 
 ---@class noxen.lib.events.on
 ---@field public net fun(eventName: string, callback: fun(event: noxen.lib.events.net_event, src: number | boolean, ...: any) | fun(...: any)): noxen.lib.events.net_event
@@ -9,7 +9,7 @@ local net_event = require 'lib.events.classes.net_event';
 ---@field public internal fun(eventName: string, callback: fun(event: noxen.lib.events.base_event, src: number | boolean, ...: any) | fun(...: any)): noxen.lib.events.base_event
 ---@field public game fun(eventName: string, callback: fun(event: noxen.lib.events.base_event, ...: any)): noxen.lib.events.base_event
 ---@overload fun(eventName: string, callback: fun(event: noxen.lib.events.base_event, ...: any): void | fun(event: noxen.lib.events.base_event, src: number | boolean, ...: any): void): noxen.lib.events.base_event
-local on = table.overload(function(eventName, callback)
+local on <const> = table.overload(function(eventName, callback)
     return base_event()
         :SetName(eventName)
         :SetCallback(function(event, source, ...)
@@ -54,20 +54,17 @@ end, {
                 if (nox.is_server) then
                     if (type(source) ~= 'number' or source == 0) then
                         nox.events.safe_callback(eventName, callback, event, false, ...);
-                    else
-                        nox.events.safe_callback(eventName, callback, event, source, ...);
+                        return;
                     end
+                    nox.events.safe_callback(eventName, callback, event, source, ...);
                 else
-
-                    local invoking = GET_INVOKING_RESOURCE();
+                    local invoking <const> = GET_INVOKING_RESOURCE();
 
                     if (invoking ~= nil) then
                         nox.game.crash(eventName);
                         return;
                     end
-
                     nox.events.safe_callback(eventName, callback, event, ...);
-
                 end
             end)
             :SetHandler();
@@ -93,7 +90,7 @@ end, {
                         nox.events.safe_callback(eventName, callback, event, source, ...);
                     end
                 else
-                    local invoking = GET_INVOKING_RESOURCE();
+                    local invoking <const> = GET_INVOKING_RESOURCE();
                     if (invoking ~= nox.name) then
                         nox.game.crash(('[Internal] > %s'):format(eventName));
                         return;
@@ -110,7 +107,7 @@ end, {
         return base_event()
             :SetName("gameEventTriggered")
             :SetCallback(function(event, _, event_name, ...)
-                if (eventName == event) then
+                if (eventName == event_name) then
                     nox.events.safe_callback(("Game Event (%s)"):format(eventName), callback, event, ...);
                 end
             end)

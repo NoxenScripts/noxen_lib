@@ -1,9 +1,9 @@
 ---@type noxen.lib.notification
-local notification = nox.class.singleton('noxen.lib.notification', function(class)
+local notification <const> = nox.class.singleton('noxen.lib.notification', function(class)
 
     ---@class noxen.lib.notification: BaseObject
     ---@field public event string
-    local self = class;
+    local self <const> = class;
 
     function self:Constructor()
         self.event = ('%s.%s'):format(eLibEvents.sendNotification, nox.current_resource);
@@ -20,26 +20,19 @@ local notification = nox.class.singleton('noxen.lib.notification', function(clas
     ---@vararg any
     ---@return string
     function self:Send(message, hudColorIndex, isTranslation, ...)
-
         assert(not nox.is_server, 'This function can only be called on the client.');
 
         if (type(message) == 'string') then
-
-            local _message = isTranslation and _U(message, ...) or message;
+            local _message <const> = isTranslation and _U(message, ...) or message;
 
             BeginTextCommandThefeedPost('STRING');
             AddTextComponentSubstringPlayerName(_message);
-
             if (type(hudColorIndex) == 'number') then
                 ThefeedSetNextPostBackgroundColor(hudColorIndex);
             end
-
             EndTextCommandThefeedPostTicker(false, true);
-
             return _message;
-
         end
-
     end
 
     ---@param source number
@@ -62,7 +55,6 @@ local notification = nox.class.singleton('noxen.lib.notification', function(clas
     end
 
     return self;
-
 end);
 
 

@@ -3,7 +3,7 @@
 ---@field public position vector3
 ---@field public size number
 ---@field public actions List
-local ZoneRadius = Class.extends('ZoneRadius', 'EventEmitter');
+local ZoneRadius <const> = Class.extends('ZoneRadius', 'EventEmitter');
 
 function ZoneRadius:Constructor()
 	assert(not nox.is_server, 'ZoneRadius class is only available on client.');
