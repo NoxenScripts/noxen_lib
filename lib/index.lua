@@ -7,5 +7,6 @@ require 'lib.game.index';
 require 'lib.entity.index';
 require 'lib.ui.index';
 require 'lib.listeners.index';
+require 'lib.bridge.index';
 
 nox.set_required_resource();

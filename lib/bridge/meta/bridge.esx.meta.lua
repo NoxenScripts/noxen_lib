@@ -1,0 +1,139 @@
+---@meta ESXBridge
+
+---@class noxen.lib.bridge.esx.account
+---@field public name string # Account name (e.g., "bank", "money").
+---@field public money number # Current balance in this account.
+---@field public label string # Human-readable label for the account.
+---@field public round boolean # Whether amounts are rounded for display.
+---@field public index number # Index of the account in the player's accounts list.
+
+---@class noxen.lib.bridge.esx.item
+---@field public name string # Item identifier (internal name).
+---@field public label string # Display name of the item.
+---@field public weight number # Weight of a single unit of the item.
+---@field public usable boolean # Whether the item can be used.
+---@field public rare boolean # Whether the item is rare.
+---@field public canRemove boolean # Whether the item can be removed from inventory.
+
+---@class noxen.lib.bridge.esx.inventory.item: noxen.lib.bridge.esx.item
+---@field public count number # Number of this item in the player's inventory.
+
+---@class noxen.lib.bridge.esx.job
+---@field public id number # Job ID.
+---@field public name string # Job internal name.
+---@field public label string # Job display label.
+---@field public grade number # Current grade/rank number.
+---@field public grade_name string # Name of the current grade.
+---@field public grade_label string # Label of the current grade.
+---@field public grade_salary number # Salary for the current grade.
+---@field public skin_male table # Skin configuration for male characters.
+---@field public skin_female table # Skin configuration for female characters.
+---@field public onDuty boolean? # Whether the player is currently on duty.
+
+---@class noxen.lib.bridge.esx.weapon
+---@field public name string # Weapon identifier (internal name).
+---@field public label string # Weapon display name.
+
+---@class noxen.lib.bridge.esx.inventory.weapon: noxen.lib.bridge.esx.weapon
+---@field public ammo number # Amount of ammo in the weapon.
+---@field public components string[] # List of components attached to the weapon.
+---@field public tintIndex number # Current weapon tint index.
+
+---@class noxen.lib.bridge.esx.weapon.component
+---@field public name string # Component identifier (internal name).
+---@field public label string # Component display name.
+---@field public hash string|number # Component hash or identifier.
+
+---@class noxen.lib.bridge.esx.player
+--- Money Functions
+---@field public setMoney fun(money: number) # Set player's cash balance.
+---@field public getMoney fun(): number  # Get player's current cash balance.
+---@field public addMoney fun(money: number, reason: string) # Add money to the player's cash balance.
+---@field public removeMoney fun(money: number, reason: string) # Remove money from the player's cash balance.
+---@field public setAccountMoney fun(accountName: string, money: number, reason?: string)  # Set specific account balance.
+---@field public addAccountMoney fun(accountName: string, money: number, reason?: string)  # Add money to an account.
+---@field public removeAccountMoney fun(accountName: string, money: number, reason?: string) # Remove money from an account.
+---@field public getAccount fun(account: string): noxen.lib.bridge.esx.account? # Get account data by name.
+---@field public getAccounts fun(minimal?: boolean): noxen.lib.bridge.esx.account[]|table<string,number>  # Get all accounts, optionally minimal.
+--- Inventory Functions
+---@field public getInventory fun(minimal?: boolean): noxen.lib.bridge.esx.inventory.item[]|table<string,number> # Get inventory, optionally minimal.
+---@field public getInventoryItem fun(itemName: string): noxen.lib.bridge.esx.inventory.item? # Get a specific item from inventory.
+---@field public addInventoryItem fun(itemName: string, count: number) # Add items to inventory.
+---@field public removeInventoryItem fun(itemName: string, count: number) # Remove items from inventory.
+---@field public setInventoryItem fun(itemName: string, count: number) # Set item count in inventory.
+---@field public getWeight fun(): number # Get current carried weight.
+---@field public getMaxWeight fun(): number # Get maximum carry weight.
+---@field public setMaxWeight fun(newWeight: number) # Set maximum carry weight.
+---@field public canCarryItem fun(itemName: string, count: number): boolean # Check if player can carry more of an item.
+---@field public canSwapItem fun(firstItem: string, firstItemCount: number, testItem: string, testItemCount: number): boolean # Check if items can be swapped.
+---@field public hasItem fun(item: string): noxen.lib.bridge.esx.inventory.item|false, number? # Check if player has an item.
+---@field public getLoadout fun(minimal?: boolean): noxen.lib.bridge.esx.inventory.weapon[]|table<string, {ammo:number, tintIndex?:number, components?:string[]}> # Get player's weapon loadout.
+--- Job Functions
+---@field public getJob fun(): noxen.lib.bridge.esx.job # Get player's current job.
+---@field public setJob fun(newJob: string, grade: string, onDuty?: boolean) # Set player's job and grade.
+---@field public getJob2? fun(): noxen.lib.bridge.esx.job # Get player's current job.
+---@field public setJob2? fun(newJob: string, grade: string, onDuty?: boolean) # Set player's job and grade.
+---@field public setGroup fun(newGroup: string) # Set player's permission group.
+---@field public getGroup fun(): string # Get player's permission group.
+--- Weapon Functions
+---@field public addWeapon fun(weaponName: string, ammo: number) # Give player a weapon.
+---@field public removeWeapon fun(weaponName: string) # Remove weapon from player.
+---@field public hasWeapon fun(weaponName: string): boolean # Check if player has a weapon.
+---@field public getWeapon fun(weaponName: string): number?, table? # Get weapon ammo & components.
+---@field public addWeaponAmmo fun(weaponName: string, ammoCount: number) # Add ammo to a weapon.
+---@field public removeWeaponAmmo fun(weaponName: string, ammoCount: number) # Remove ammo from a weapon.
+---@field public updateWeaponAmmo fun(weaponName: string, ammoCount: number) # Update ammo count for a weapon.
+---@field public addWeaponComponent fun(weaponName: string, weaponComponent: string) # Add component to weapon.
+---@field public removeWeaponComponent fun(weaponName: string, weaponComponent: string) # Remove component from weapon.
+---@field public hasWeaponComponent fun(weaponName: string, weaponComponent: string): boolean # Check if weapon has component.
+---@field public setWeaponTint fun(weaponName: string, weaponTintIndex: number) # Set weapon tint.
+---@field public getWeaponTint fun(weaponName: string): number # Get weapon tint.
+--- Player State Functions
+---@field public getIdentifier fun(): string # Get player's unique identifier.
+---@field public getSSN fun(): string # Get player's social security number.
+---@field public getSource fun(): number # Get player source/server ID.
+---@field public getPlayerId fun(): number # Alias for getSource.
+---@field public getName fun(): string # Get player's name.
+---@field public setName fun(newName: string) # Set player's name.
+---@field public setCoords fun(coordinates: vector4|vector3|table) # Teleport player to coordinates.
+---@field public getCoords fun(vector?: boolean, heading?: boolean): vector3|vector4|table # Get player's coordinates.
+---@field public isAdmin fun(): boolean # Check if player is admin.
+---@field public kick fun(reason: string) # Kick player from server.
+---@field public getPlayTime fun(): number # Get total playtime in seconds.
+---@field public set fun(k: string, v: any) # Set custom variable.
+---@field public get fun(k: string): any # Get custom variable.
+--- Metadata Functions
+---@field public getMeta fun(index?: string, subIndex?: string|table): any # Get metadata value(s).
+---@field public setMeta fun(index: string, value: any, subValue?: any) # Set metadata value(s).
+---@field public clearMeta fun(index: string, subValues?: string|table) # Clear metadata value(s).
+--- Notification Functions
+---@field public showNotification fun(msg: string, notifyType?: string, length?: number) # Show a simple notification.
+---@field public showAdvancedNotification fun(sender: string, subject: string, msg: string, textureDict: string, iconType: string, flash: boolean, saveToBrief: boolean, hudColorIndex: number) # Show advanced notification.
+---@field public showHelpNotification fun(msg: string, thisFrame?: boolean, beep?: boolean, duration?: number) # Show help notification.
+--- Misc Functions
+---@field public togglePaycheck fun(toggle: boolean) # Enable/disable paycheck.
+---@field public isPaycheckEnabled fun(): boolean # Check if paycheck is enabled.
+---@field public executeCommand fun(command: string) # Execute a server command.
+---@field public triggerEvent fun(eventName: string, ...) # Trigger client event for this player.
+--- Properties
+---@field public accounts noxen.lib.bridge.esx.account[] # Array of the player's accounts.
+---@field public coords table # Player's coordinates {x, y, z, heading}.
+---@field public group string # Player permission group.
+---@field public identifier string # Unique identifier (usually Steam or license).
+---@field public license string # Player license string.
+---@field public inventory noxen.lib.bridge.esx.inventory.item[] # Player's inventory items.
+---@field public job noxen.lib.bridge.esx.job # Player's current job.
+---@field public loadout noxen.lib.bridge.esx.inventory.weapon[] # Player's current weapons.
+---@field public name string # Player's display name.
+---@field public playerId number # Player's ID (server ID).
+---@field public source number # Player's source (alias for playerId).
+---@field public variables table # Custom player variables.
+---@field public weight number # Current carried weight.
+---@field public maxWeight number # Maximum carry weight.
+---@field public metadata table # Custom metadata table.
+---@field public lastPlaytime number # Last recorded playtime in seconds.
+---@field public paycheckEnabled boolean # Whether paycheck is enabled.
+---@field public admin boolean # Whether the player is an admin.
+
+---@class noxen.lib.esx
+---@field public GetPlayerFromId fun(source: number): noxen.lib.bridge.esx.player
