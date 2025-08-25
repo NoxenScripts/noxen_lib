@@ -137,3 +137,6 @@
 
 ---@class noxen.lib.esx
 ---@field public GetPlayerFromId fun(source: number): noxen.lib.bridge.esx.player
+---@field public GetIdentifier fun(source: number, identifier?: identifier): string
+---@field public RegisterUsableItem fun(itemName: string, handler: fun(source: number, itemName: string, ...: any)) # Register a usable item with a handler function.
+---@field public GetUsableItems fun(): table<string, boolean> # Get a table of all usable items.

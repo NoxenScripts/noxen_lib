@@ -17,16 +17,22 @@
 ---@field public label string # Account display label.
 ---@field public type 'account' | 'item' # Account type, either 'account' or 'item'.
 
+---@class noxen.lib.bridge.wrapper.player.inventory
+---@field public hasItem fun(player: noxen.lib.bridge.player, itemName: string, amount?: number): boolean # Check if the player has a specific item and amount.
+
 ---@class noxen.lib.bridge.wrapper
 ---@field public player noxen.lib.bridge.wrapper.player # Player-specific methods for all frameworks.
 ---@field public accounts noxen.lib.bridge.wrapper.accounts # Shared accounts across frameworks.
 ---@field public getPlayer fun(bridge: noxen.lib.bridge, source: number): noxen.lib.bridge.player? # Function to get player object by source ID.
+---@field public isItemUsable fun(bridge: noxen.lib.bridge, itemName: string): boolean # Function to check if an item is usable.
 
 ---@class noxen.lib.bridge.wrapper.player
+---@field public getIdentifier fun(player: noxen.lib.bridge.player): string # Function to get the player's unique identifier.
 ---@field public job noxen.lib.bridge.wrapper.player.job
 ---@field public job2 noxen.lib.bridge.wrapper.player.job
 ---@field public notification noxen.lib.bridge.wrapper.player.notification
 ---@field public account noxen.lib.bridge.wrapper.player.account
+---@field public inventory noxen.lib.bridge.wrapper.player.inventory
 
 ---@class noxen.lib.bridge.wrapper.player.job
 ---@field public get fun(player: noxen.lib.bridge.player): noxen.lib.bridge.player.job? # Function to get job information.
