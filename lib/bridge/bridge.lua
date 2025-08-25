@@ -1,6 +1,8 @@
 local player <const> = require 'lib.bridge.player.classes.player';
 local wrapper <const> = require 'lib.bridge.wrapper';
 
+local getPlayers <const> = GetPlayers;
+
 ---@class noxen.lib.bridge
 ---@field public name 'esx' | 'qb' | 'custom'
 ---@field public resource_name string
@@ -8,6 +10,7 @@ local wrapper <const> = require 'lib.bridge.wrapper';
 ---@field public version string
 ---@field public wrapper noxen.lib.bridge.wrapper
 ---@field public loaded boolean
+---@field public playersIdentifier table<string, number> Maps player identifiers to their source IDs
 ---@overload fun(): noxen.lib.bridge
 local bridge <const> = nox.class.new 'noxen.lib.bridge';
 
@@ -15,23 +18,15 @@ function bridge:Constructor()
     local success <const>, err <const> = pcall(bridge.Load, self);
 
     if (not success) then
-        console.err(("Failed to load bridge: ^1%s^7"):format(err));
-        StopResource(nox.current_resource);
+        console.err(("Failed to load bridge: %s^7"):format(err));
+        if (nox.is_server) then
+            StopResource(nox.current_resource);
+        end
         return;
     end
 
+    self.playersIdentifier = {};
     self.loaded = true;
-
-    if (self.name == 'qb') then
-        local register <const> = nox.is_server and AddEventHandler or RegisterNetEvent;
-        local name <const> = ('QBCore:%s:UpdateObject'):format(nox.is_server and 'Server' or 'Client');
-
-        register(name, function(obj)
-            self.framework = obj;
-            console.debug('QBCore framework updated');
-        end);
-    end
-
     console.log(("Bridge loaded successfully with framework: ^3%s^7, version: ^3%s^7"):format(self.name, self.version));
 end
 
@@ -62,6 +57,62 @@ function bridge:LoadVariables(name, resourceName, version, framework)
     assert(self.wrapper.accounts.money, "bridge.SetVariables() - accounts must contain 'cash' account");
 
     return self;
+end
+
+function bridge:IsLoaded()
+    return self.loaded == true;
+end
+
+--- Waits until the bridge is fully loaded
+---@async
+function bridge:Await()
+    if (self:IsLoaded()) then
+        return;
+    end
+
+    local promise <const> = promise.new();
+
+    async(function()
+        while (not self:IsLoaded()) do
+            async.wait();
+        end
+        promise:resolve();
+    end);
+    Citizen.Await(promise);
+end
+
+---@param framework 'esx' | 'qb' | 'custom'
+---@param name string
+---@param handler fun(...: any)
+---@return EventHandlerData
+function bridge:AddEventHandler(framework, name, handler)
+    assert(type(name) == 'string', "bridge.AddEventHandler() - name must be a string");
+    assert(type(handler) == 'function', "bridge.AddEventHandler() - handler must be a function");
+
+    return AddEventHandler(name, function(...)
+        if (self.name ~= framework) then
+            console.warn(("bridge.AddEventHandler() - Attempt to trigger %s event on %s framework"):format(name, self.name));
+            return;
+        end
+        handler(...);
+    end);
+end
+
+---@param framework 'esx' | 'qb' | 'custom'
+---@param name string
+---@param handler fun(...: any)
+---@return EventHandlerData?
+function bridge:RegisterNetEvent(framework, name, handler)
+    assert(type(name) == 'string', "bridge.RegisterNetEvent() - name must be a string");
+    assert(type(handler) == 'function', "bridge.RegisterNetEvent() - handler must be a function");
+
+    return RegisterNetEvent(name, function(...)
+        if (self.name ~= framework) then
+            console.warn(("bridge.RegisterNetEvent() - Attempt to trigger %s event on %s framework"):format(name, self.name));
+            return;
+        end
+        handler(...);
+    end);
 end
 
 ---@private
@@ -118,15 +169,15 @@ function bridge:Load()
     local errors <const> = {};
 
     if (not esx_success) then
-        errors[#errors + 1] = ("ESX framework failed to load: %s"):format(esx_result);
+        errors[#errors + 1] = ("^1ESX framework failed to load: ^7%s^7"):format(esx_result);
     end
 
     if (not qb_success) then
-        errors[#errors + 1] = ("QB-Core framework failed to load: %s"):format(qb_result);
+        errors[#errors + 1] = ("^1QB-Core framework failed to load: ^7%s^7"):format(qb_result);
     end
 
     if (not custom_success) then
-        errors[#errors + 1] = ("Custom framework failed to load: %s"):format(custom_result);
+        errors[#errors + 1] = ("^1Custom framework failed to load: ^7%s^7"):format(custom_result);
     end
 
     assert(#errors < 3, ("Failed to load framework (ESX/QB/Custom). Please ensure it is properly configured.\n%s"):format(table.concat(errors, '\n')));
@@ -134,12 +185,67 @@ function bridge:Load()
     assert(self.version, "Failed to retrieve version of the framework. Please ensure the resource is properly configured.");
 end
 
+---@return (noxen.lib.bridge.player|nil)[]
+function bridge:GetPlayers()
+    local sources <const> = getPlayers();
+
+    return setmetatable({}, {
+        __index = function(_, i)
+            local source <const> = tonumber(sources[i]);
+
+            if (not source) then
+                return nil;
+            end
+
+            local handle <const> = self.wrapper.getPlayer(self, source);
+
+            return handle and player(self, source, handle) or nil;
+        end,
+        __len = function() return #sources; end,
+        __pairs = function()
+            local i = 0;
+            return function()
+                i += 1;
+
+                local source <const> = tonumber(sources[i]);
+
+                if (not source) then
+                    return nil;
+                end
+
+                local handle <const> = self.wrapper.getPlayer(self, source);
+
+                return i, handle and player(self, source, handle) or nil;
+            end
+        end
+    });
+end
+
+--- Get a player object by their source ID.
 ---@param source number
 ---@return noxen.lib.bridge.player?
 function bridge:GetPlayer(source)
-    assert(type(source) == 'number', "bridge.GetPlayer() - source must be a number");
-    local handle <const> = self.wrapper.getPlayer(self, source);
-    return handle and player(self, source, handle);
+    assert(type(source) == 'number' or type(source) == 'string', "bridge.GetPlayer() - source must be a number");
+    local src <const> = tonumber(source);
+    local handle <const> = self.wrapper.getPlayer(self, src);
+    return handle and player(self, src, handle) or nil;
+end
+
+---@param identifier string
+---@return noxen.lib.bridge.player?
+function bridge:GetPlayerByIdentifier(identifier)
+    assert(type(identifier) == 'string', "bridge.GetPlayerByIdentifier() - identifier must be a string");
+    local source <const> = self.playersIdentifier[identifier];
+    return source and self:GetPlayer(source) or nil;
+end
+
+--- Check if an item is registered as usable.
+---@param itemName string
+---@return boolean
+function bridge:IsItemUsable(itemName)
+    assert(type(itemName) == 'string', "bridge.IsItemUsable() - itemName must be a string");
+
+    return self.wrapper.isItemUsable(self, itemName);
 end
 
 return bridge();
