@@ -163,7 +163,9 @@ local function send_message(logType, ...)
         end
         return;
     end
-    console.err(("An error occured when trying to trace content, stack: ^7(^1%s^7)"):format(msg));
+    local debug_trace <const> = debug.getinfo(2, "Sl");
+    local trace <const> = debug_trace and ("%s:%d"):format(debug_trace.short_src, debug_trace.currentline) or "unknown";
+    console.err(("An error occured when trying to trace content ^7(^1%s^7), stack: ^7(^1%s^7)"):format(trace, msg));
 end
 
 ---@vararg any
