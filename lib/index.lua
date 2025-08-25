@@ -1,3 +1,4 @@
+require 'lib.overrides.index';
 require 'lib.config.index';
 require 'lib.resource.index';
 require 'lib.convar.index';
