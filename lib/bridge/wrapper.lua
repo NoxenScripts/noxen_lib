@@ -25,7 +25,19 @@ local methods <const> = {
         getPlayer = function(bridge, source)
             return bridge.framework.GetPlayerFromId(source);
         end,
+        ---@param bridge noxen.lib.bridge
+        ---@param itemName string
+        ---@return boolean
+        isItemUsable = function(bridge, itemName)
+            local usableItems <const> = bridge.framework.GetUsableItems();
+            return usableItems[itemName] == true;
+        end,
         player = {
+            ---@param player noxen.lib.bridge.player
+            ---@return string
+            getIdentifier = function(player)
+                return player.handle.license;
+            end,
             job = {
                 ---@param player noxen.lib.bridge.player
                 ---@return noxen.lib.bridge.esx.job
@@ -102,6 +114,15 @@ local methods <const> = {
                 remove = function(player, accountName, amount, reason)
                     return player.handle.removeAccountMoney(accountName, amount, reason);
                 end
+            },
+            inventory = {
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@param amount? number
+                ---@return boolean
+                hasItem = function(player, itemName, amount)
+                    return player.handle.hasItem(itemName, amount);
+                end
             }
         }
     },
@@ -114,12 +135,12 @@ local methods <const> = {
                     type = 'account'
                 },
                 black_money = {
-                    name = 'black_money',
-                    label = 'Black Money',
+                    name = 'crypto',
+                    label = 'Crypto',
                     type = 'item'
                 },
                 money = {
-                    name = 'money',
+                    name = 'cash',
                     label = 'Cash',
                     type = 'item'
                 }
@@ -131,7 +152,18 @@ local methods <const> = {
         getPlayer = function(bridge, source)
             return bridge.framework.Functions.GetPlayer(source);
         end,
+        ---@param bridge noxen.lib.bridge
+        ---@param itemName string
+        ---@return boolean
+        isItemUsable = function(bridge, itemName)
+            return bridge.framework.Functions.CanUseItem(itemName) ~= nil;
+        end,
         player = {
+            ---@param player noxen.lib.bridge.player
+            ---@return string
+            getIdentifier = function(player)
+                return player.handle.license;
+            end,
             job = {
                 ---@param player noxen.lib.bridge.player
                 ---@return noxen.lib.bridge.qb.job
@@ -203,6 +235,15 @@ local methods <const> = {
                 end,
                 remove = function(player, accountName, amount, reason)
                     return player.handle.Functions.RemoveMoney(accountName, amount, reason);
+                end
+            },
+            inventory = {
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@param amount? number
+                ---@return boolean
+                hasItem = function(player, itemName, amount)
+                    return player.handle.Functions.HasItem(itemName, amount);
                 end
             }
         }

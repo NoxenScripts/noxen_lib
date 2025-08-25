@@ -43,7 +43,18 @@ local methods <const> = {
     getPlayer = function(bridge, source)
         return;
     end,
+    ---@param bridge noxen.lib.bridge
+    ---@param itemName string
+    ---@return boolean
+    isItemUsable = function(bridge, itemName)
+        return false;
+    end,
     player = {
+        ---@param player noxen.lib.bridge.player
+        ---@return string
+        getIdentifier = function(player)
+            return nil;
+        end,
         job = {
             ---@param player noxen.lib.bridge.player
             ---@return noxen.lib.bridge.custom.job?
