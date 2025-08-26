@@ -10,6 +10,24 @@ bridge:AddEventHandler('qb', 'QBCore:Server:PlayerLoaded', function(player)
     bridge.playersIdentifier[player.PlayerData.license] = player.PlayerData.source;
 end);
 
+bridge:AddEventHandler('qb', 'QBCore:Player:SetPlayerData', function(data)
+    local player <const> = bridge:GetPlayer(data.source);
+
+    if (not player) then
+        return console.warn(("QBCore:Player:SetPlayerData - Player with source ^3%s^7 not found."):format(data.source));
+    end
+
+    player:TriggerEvent(('noxen_lib_%s:bridge:player:setPlayerData'):format(nox.current_resource), {
+        identifier = player:GetIdentifier(),
+        job = player:GetJob(),
+        job2 = player:GetJob2(),
+        money = player:GetAccountMoney('money'),
+        black_money = player:GetAccountMoney('black_money'),
+        bank = player:GetAccountMoney('bank'),
+        inventory = player:GetInventory()
+    });
+end);
+
 bridge:AddEventHandler('qb', 'QBCore:Server:OnPlayerUnload', function(source)
     local player <const> = bridge:GetPlayer(source);
 

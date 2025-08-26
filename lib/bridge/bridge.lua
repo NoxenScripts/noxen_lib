@@ -1,8 +1,9 @@
-local player <const> = require 'lib.bridge.player.classes.player';
+local player <const> = require 'lib.bridge.player.classes.net';
 local wrapper <const> = require 'lib.bridge.wrapper';
 
 local getPlayers <const> = GetPlayers;
 
+--- <h3>Both(Client/Server) Authority</h3>
 ---@class noxen.lib.bridge
 ---@field public name 'esx' | 'qb' | 'custom'
 ---@field public resource_name string
@@ -11,6 +12,7 @@ local getPlayers <const> = GetPlayers;
 ---@field public wrapper noxen.lib.bridge.wrapper
 ---@field public loaded boolean
 ---@field public playersIdentifier table<string, number> Maps player identifiers to their source IDs
+---@field public player noxen.lib.bridge.player.local
 ---@overload fun(): noxen.lib.bridge
 local bridge <const> = nox.class.new 'noxen.lib.bridge';
 
@@ -27,9 +29,15 @@ function bridge:Constructor()
 
     self.playersIdentifier = {};
     self.loaded = true;
+
+    local class <const> = not nox.is_server and require('lib.bridge.player.classes.local') or nil;
+
+    self.player = class and class(self);
+
     console.log(("Bridge loaded successfully with framework: ^3%s^7, version: ^3%s^7"):format(self.name, self.version));
 end
 
+--- <h3>Both(Client/Server) Authority</h3>
 ---@private
 ---@param name string
 ---@param resourceName string
@@ -59,10 +67,12 @@ function bridge:LoadVariables(name, resourceName, version, framework)
     return self;
 end
 
+--- <h3>Both(Client/Server) Authority</h3>
 function bridge:IsLoaded()
     return self.loaded == true;
 end
 
+--- <h3>Both(Client/Server) Authority</h3>
 --- Waits until the bridge is fully loaded
 ---@async
 function bridge:Await()
@@ -81,6 +91,7 @@ function bridge:Await()
     Citizen.Await(promise);
 end
 
+--- <h3>Both(Client/Server) Authority</h3>
 ---@param framework 'esx' | 'qb' | 'custom'
 ---@param name string
 ---@param handler fun(...: any)
@@ -98,6 +109,7 @@ function bridge:AddEventHandler(framework, name, handler)
     end);
 end
 
+--- <h3>Both(Client/Server) Authority</h3>
 ---@param framework 'esx' | 'qb' | 'custom'
 ---@param name string
 ---@param handler fun(...: any)
@@ -115,6 +127,7 @@ function bridge:RegisterNetEvent(framework, name, handler)
     end);
 end
 
+--- <h3>Both(Client/Server) Authority</h3>
 ---@private
 function bridge:Load()
     assert(not self.loaded, "bridge.Load() - Bridge is already loaded");
@@ -185,8 +198,10 @@ function bridge:Load()
     assert(self.version, "Failed to retrieve version of the framework. Please ensure the resource is properly configured.");
 end
 
+--- <h3>Server Authority</h3>
 ---@return (noxen.lib.bridge.player|nil)[]
 function bridge:GetPlayers()
+    assert(nox.is_server, 'noxen.lib.bridge.GetPlayers is not available on client.');
     local sources <const> = getPlayers();
 
     return setmetatable({}, {
@@ -221,28 +236,34 @@ function bridge:GetPlayers()
     });
 end
 
+--- <h3>Server Authority</h3>
 --- Get a player object by their source ID.
 ---@param source number
 ---@return noxen.lib.bridge.player?
 function bridge:GetPlayer(source)
+    assert(nox.is_server, 'noxen.lib.bridge.GetPlayer is not available on client.');
     assert(type(source) == 'number' or type(source) == 'string', "bridge.GetPlayer() - source must be a number");
     local src <const> = tonumber(source);
     local handle <const> = self.wrapper.getPlayer(self, src);
     return handle and player(self, src, handle) or nil;
 end
 
+--- <h3>Server Authority</h3>
 ---@param identifier string
 ---@return noxen.lib.bridge.player?
 function bridge:GetPlayerByIdentifier(identifier)
+    assert(nox.is_server, 'noxen.lib.bridge.GetPlayerByIdentifier is not available on client.');
     assert(type(identifier) == 'string', "bridge.GetPlayerByIdentifier() - identifier must be a string");
     local source <const> = self.playersIdentifier[identifier];
     return source and self:GetPlayer(source) or nil;
 end
 
+--- <h3>Server Authority</h3>
 --- Check if an item is registered as usable.
 ---@param itemName string
 ---@return boolean
 function bridge:IsItemUsable(itemName)
+    assert(nox.is_server, 'noxen.lib.bridge.IsItemUsable is not available on client.');
     assert(type(itemName) == 'string', "bridge.IsItemUsable() - itemName must be a string");
 
     return self.wrapper.isItemUsable(self, itemName);
