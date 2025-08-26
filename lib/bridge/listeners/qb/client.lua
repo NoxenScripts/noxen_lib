@@ -5,6 +5,6 @@ bridge:RegisterNetEvent('qb', 'QBCore:Client:UpdateObject', function(obj)
     console.debug('QBCore framework updated');
 end);
 
-bridge:RegisterNetEvent('qb', 'QBCore:Player:SetPlayerData', function(playerData)
-    console.log(("QBCore player data updated: %s"):format(json.encode(playerData, {indent=true})));
-end);
+-- bridge:RegisterNetEvent('qb', 'QBCore:Player:SetPlayerData', function(playerData)
+--     console.log(("QBCore player data updated: %s"):format(json.encode(playerData, {indent=true})));
+-- end);
