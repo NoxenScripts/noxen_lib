@@ -4,7 +4,7 @@ local net_event <const> = require 'lib.events.classes.net_event';
 
 ---@class noxen.lib.events.on
 ---@field public net fun(eventName: string, callback: fun(event: noxen.lib.events.net_event, src: number | boolean, ...: any) | fun(...: any)): noxen.lib.events.net_event
----@field public secure fun(eventName: string, callback: fun(event: noxen.lib.events.net_event, src: number | boolean, ...: any) | fun(...: any)): noxen.lib.events.net_event
+---@field public secure fun(eventName: string, callback: fun(event: noxen.lib.events.net_event, src: number | boolean, ...: any) | fun(event: noxen.lib.events.net_event, ...: any)): noxen.lib.events.net_event
 ---@field public callback fun(eventName: string, callback: fun(src: number, response: fun(...: any), ...: any) | fun(response: fun(...: any), ...: any), ...: any): void
 ---@field public internal fun(eventName: string, callback: fun(event: noxen.lib.events.base_event, src: number | boolean, ...: any) | fun(...: any)): noxen.lib.events.base_event
 ---@field public game fun(eventName: string, callback: fun(event: noxen.lib.events.base_event, ...: any)): noxen.lib.events.base_event
