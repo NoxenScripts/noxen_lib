@@ -116,6 +116,58 @@ local methods <const> = {
             remove = function(player, accountName, amount, reason)
                 return nil; -- Custom implementation needed
             end
+        },
+        inventory = {
+            ---@param player noxen.lib.bridge.player
+            getItems = function(player)
+                return player.handle.getInventory();
+            end,
+            ---@param player noxen.lib.bridge.player
+            ---@param itemName string
+            ---@param amount? number
+            ---@return boolean
+            canCarryItem = function(player, itemName, amount)
+                return false; -- Custom implementation needed
+            end,
+            ---@param player noxen.lib.bridge.player
+            ---@param itemName string
+            ---@param amount? number
+            ---@return boolean
+            has = function(player, itemName, amount)
+                return false; -- Custom implementation needed
+            end,
+            ---@param player noxen.lib.bridge.player
+            ---@param itemName string
+            ---@return noxen.lib.bridge.qb.player.inventory.item
+            get = function(player, itemName)
+                return nil; -- Custom implementation needed
+            end,
+            ---@param player noxen.lib.bridge.player
+            ---@param itemName string
+            ---@param amount? number
+            ---@param reason? string
+            add = function(player, itemName, amount, reason)
+                return nil; -- Custom implementation needed
+            end,
+            ---@param player noxen.lib.bridge.player
+            ---@param itemName string
+            ---@param amount? number
+            ---@param reason? string
+            remove = function(player, itemName, amount, reason)
+                return nil; -- Custom implementation needed
+            end
+        end
+    },
+    client = {
+        notification = {
+            ---@param message string
+            ---@param type? 'info' | 'success' | 'error'
+            ---@param length? number
+            notify = function(message, type, length)
+                BeginTextCommandDisplayText('STRING');
+                AddTextComponentSubstringPlayerName(message);
+                EndTextCommandDisplayText(0.5, 0.5);
+            end
         }
     }
 };

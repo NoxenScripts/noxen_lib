@@ -117,11 +117,55 @@ local methods <const> = {
             },
             inventory = {
                 ---@param player noxen.lib.bridge.player
+                getItems = function(player)
+                    return player.handle.getInventory();
+                end,
+                ---@param player noxen.lib.bridge.player
                 ---@param itemName string
                 ---@param amount? number
                 ---@return boolean
-                hasItem = function(player, itemName, amount)
+                canCarryItem = function(player, itemName, amount)
+                    return player.handle.canCarryItem(itemName, amount);
+                end,
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@param amount? number
+                ---@return boolean
+                has = function(player, itemName, amount)
                     return player.handle.hasItem(itemName, amount);
+                end,
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@return noxen.lib.bridge.esx.item
+                get = function(player, itemName)
+                    return player.handle.getInventoryItem(itemName);
+                end,
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@param amount? number
+                ---@param reason? string
+                add = function(player, itemName, amount, reason)
+                    return player.handle.addInventoryItem(itemName, amount, reason);
+                end,
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@param amount? number
+                ---@param reason? string
+                remove = function(player, itemName, amount, reason)
+                    return player.handle.removeInventoryItem(itemName, amount, reason);
+                end
+            }
+        },
+        client = {
+            notification = {
+                ---@param message string
+                ---@param type? 'info' | 'success' | 'error'
+                ---@param length? number
+                notify = function(message, type, length)
+                    ESX.ShowNotification(message, type, length);
+                    BeginTextCommandDisplayText('STRING');
+                    AddTextComponentSubstringPlayerName(message);
+                    EndTextCommandDisplayText(0.5, 0.5);
                 end
             }
         }
@@ -162,7 +206,7 @@ local methods <const> = {
             ---@param player noxen.lib.bridge.player
             ---@return string
             getIdentifier = function(player)
-                return player.handle.license;
+                return player.handle.PlayerData.license;
             end,
             job = {
                 ---@param player noxen.lib.bridge.player
@@ -239,11 +283,57 @@ local methods <const> = {
             },
             inventory = {
                 ---@param player noxen.lib.bridge.player
+                getItems = function(player)
+                    return player.handle.PlayerData.items;
+                end,
+                ---@param player noxen.lib.bridge.player
                 ---@param itemName string
                 ---@param amount? number
                 ---@return boolean
-                hasItem = function(player, itemName, amount)
-                    return player.handle.Functions.HasItem(itemName, amount);
+                canCarryItem = function(player, itemName, amount)
+                    assert(GetResourceState('qb-inventory') == 'started', "QB-Inventory resource is not started.");
+                    return exports['qb-inventory']:CanAddItem(player.source, itemName, amount);
+                end,
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@param amount? number
+                ---@return boolean
+                has = function(player, itemName, amount)
+                    assert(GetResourceState('qb-inventory') == 'started', "QB-Inventory resource is not started.");
+                    return exports['qb-inventory']:HasItem(player.source, itemName, amount);
+                end,
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@return noxen.lib.bridge.qb.player.inventory.item
+                get = function(player, itemName)
+                    assert(GetResourceState('qb-inventory') == 'started', "QB-Inventory resource is not started.");
+                    return exports['qb-inventory']:GetItemByName(player.source, itemName);
+                end,
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@param amount? number
+                ---@param reason? string
+                add = function(player, itemName, amount, reason)
+                    assert(GetResourceState('qb-inventory') == 'started', "QB-Inventory resource is not started.");
+                    return exports['qb-inventory']:AddItem(player.source, itemName, amount, nil, nil, reason);
+                end,
+                ---@param player noxen.lib.bridge.player
+                ---@param itemName string
+                ---@param amount? number
+                ---@param reason? string
+                remove = function(player, itemName, amount, reason)
+                    assert(GetResourceState('qb-inventory') == 'started', "QB-Inventory resource is not started.");
+                    return exports['qb-inventory']:RemoveItem(identifier, item, amount, nil, reason);
+                end
+            }
+        },
+        client = {
+            notification = {
+                ---@param message string
+                ---@param type? 'info' | 'success' | 'error'
+                ---@param length? number
+                notify = function(message, type, length)
+                    QBCore.Functions.Notify(message, type, length);
                 end
             }
         }
