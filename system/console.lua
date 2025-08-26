@@ -24,7 +24,8 @@ local function get_type_name(obj)
     return is_table and 'table'
         or is_class and ('class \'%s\''):format(get_class_name(obj))
         or is_singleton and ('singleton \'%s\''):format(get_class_name(obj))
-        or is_class_instance and ('instance of \'%s\''):format(get_class_name(obj));
+        or is_class_instance and ('instance of \'%s\''):format(get_class_name(obj))
+        or type(obj);
 end
 
 ---@private
