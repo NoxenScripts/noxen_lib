@@ -25,6 +25,15 @@
 ---@class noxen.lib.bridge.qb.item_weapon: noxen.lib.bridge.qb.item
 ---@field ammotype string|nil # Type of ammo used (e.g., "AMMO_PISTOL", nil if not applicable).
 
+---@class noxen.lib.bridge.qb.player.inventory.item
+---@field public name string # Item identifier (internal name).
+---@field public label string # Display name of the item.
+---@field public weight number # Weight of a single unit of the item.
+---@field public amount number # Quantity of the item in the player's inventory.
+---@field public type string # Type of the item ('item', 'weapon', 'account', etc.).
+---@field public info table # Additional information about the item (e.g., weapon details).
+---@field public slot number # Inventory slot number where the item is located.
+
 ---@class noxen.lib.bridge.qb.player.functions
 ---@field public SetJob fun(job: string, grade: string|number) # Set player's job and grade.
 ---@field public SetGang fun(gang: string, grade: string|number) # Set player's gang and grade.
@@ -70,6 +79,7 @@
 ---@field public charinfo table<string, any> # Character information such as first name, last name, date of birth, etc.
 ---@field public job noxen.lib.bridge.qb.job # Player's current job data.
 ---@field public gang noxen.lib.bridge.qb.job # Player's current gang data.
+---@field public items table<number, noxen.lib.bridge.qb.player.inventory.item> # List of items in the player's inventory ordered by slot.
 
 ---@class noxen.lib.bridge.qb.player
 ---@field public Functions noxen.lib.bridge.qb.player.functions # QB-Core functions for player management.

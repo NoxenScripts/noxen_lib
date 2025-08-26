@@ -17,14 +17,33 @@
 ---@field public label string # Account display label.
 ---@field public type 'account' | 'item' # Account type, either 'account' or 'item'.
 
+---@class noxen.lib.bridge.wrapper.player.inventory.item
+---@field public name string # Item identifier (internal name).
+---@field public label string # Display name of the item.
+---@field public weight number # Weight of a single unit of the item.
+---@field public amount number # Quantity of the item in the player's inventory.
+---@field public usable boolean # Whether the item can be used.
+
 ---@class noxen.lib.bridge.wrapper.player.inventory
----@field public hasItem fun(player: noxen.lib.bridge.player, itemName: string, amount?: number): boolean # Check if the player has a specific item and amount.
+---@field public getItems fun(player: noxen.lib.bridge.player): noxen.lib.bridge.wrapper.player.inventory.item[] | table<number, noxen.lib.bridge.wrapper.player.inventory.item> # Get all items in the player's inventory.
+---@field public get fun(player: noxen.lib.bridge.player, itemName: string): noxen.lib.bridge.wrapper.player.inventory.item? # Get item details by name.
+---@field public canCarryItem fun(player: noxen.lib.bridge.player, itemName: string, amount?: number): boolean # Check if the player can carry a specific item and amount.
+---@field public add fun(player: noxen.lib.bridge.player, itemName: string, amount?: number, reason?: string) # Add a specific item and amount to the player's inventory.
+---@field public remove fun(player: noxen.lib.bridge.player, itemName: string, amount?: number, reason?: string) # Remove a specific item and amount from the player's inventory.
+---@field public has fun(player: noxen.lib.bridge.player, itemName: string, amount?: number): boolean # Check if the player has a specific item and amount.
 
 ---@class noxen.lib.bridge.wrapper
+---@field public client noxen.lib.bridge.wrapper.client # Client-specific methods for all frameworks.
 ---@field public player noxen.lib.bridge.wrapper.player # Player-specific methods for all frameworks.
 ---@field public accounts noxen.lib.bridge.wrapper.accounts # Shared accounts across frameworks.
 ---@field public getPlayer fun(bridge: noxen.lib.bridge, source: number): noxen.lib.bridge.player? # Function to get player object by source ID.
 ---@field public isItemUsable fun(bridge: noxen.lib.bridge, itemName: string): boolean # Function to check if an item is usable.
+
+---@class noxen.lib.bridge.wrapper.client.notification
+---@field public notify fun(message: string, type?: 'info' | 'success' | 'error', length?: number): void # Function to send a notification to the client.
+
+---@class noxen.lib.bridge.wrapper.client
+---@field public notification noxen.lib.bridge.wrapper.client.notification # Client notification methods.
 
 ---@class noxen.lib.bridge.wrapper.player
 ---@field public getIdentifier fun(player: noxen.lib.bridge.player): string # Function to get the player's unique identifier.
