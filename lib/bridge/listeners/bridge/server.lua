@@ -1,6 +1,6 @@
 local bridge <const> = require 'lib.bridge.bridge';
 
-nox.events.on(eCitizenFXEvents.onResourceStart, function (_, src, resource)
+nox.events.on(eCitizenFXEvents.onResourceStart, function (_, resource)
     if (resource ~= nox.current_resource) then
         return;
     end
@@ -14,7 +14,7 @@ nox.events.on(eCitizenFXEvents.onResourceStart, function (_, src, resource)
             goto continue;
         end
 
-        players[i]:TriggerEvent(('noxen_lib_%s:bridge:player:setPlayerData'):format(nox.current_resource), {
+        players[i]:TriggerResourceEvent(eLibEvents.setPlayerData, {
             identifier = players[i]:GetIdentifier(),
             job = players[i]:GetJob(),
             job2 = players[i]:GetJob2(),
@@ -23,6 +23,10 @@ nox.events.on(eCitizenFXEvents.onResourceStart, function (_, src, resource)
             bank = players[i]:GetAccountMoney('bank'),
             inventory = players[i]:GetInventory(),
         });
+        nox.events.emit.resource(eLibEvents.playerLoaded, players[i].source);
         ::continue::
     end
+
+    nox.events.emit(eLibEvents.resourceRefreshed);
+    console.debug(("Resource ^3%s^7 started, player data synced"):format(resource));
 end);
