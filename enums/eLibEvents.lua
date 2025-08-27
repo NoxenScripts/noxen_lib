@@ -7,6 +7,10 @@ eLibEvents = {
     zoneUpdate = 'noxen.game.zone.update',
     zoneStateChange = 'noxen.game.zone.stateChange',
     zoneRemove = 'noxen.game.zone.remove',
+    commandRegistered = 'noxen.lib.command.registered',
+    setPlayerData = 'bridge:player:setPlayerData',
+    playerLoaded = 'bridge:player:playerLoaded',
+    resourceRefreshed = 'noxen_lib:bridge:resource:refreshed',
 };
 
 return eLibEvents;
