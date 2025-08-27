@@ -63,6 +63,21 @@ function player:GetUserName()
     return GetPlayerName(self.source) or 'Unknown';
 end
 
+--- Get the player's group
+---@return string?
+function player:GetGroup()
+    return self.bridge.wrapper.player.getGroup(self); --- TODO : Implement for QBCore/ESX/Custom
+end
+
+--- Check if the player is in the specified group
+---@param groupName string
+---@return boolean
+function player:HasGroup(groupName)
+    assert(type(groupName) == 'string', "player:hasGroup() - groupName must be a string");
+    local playerGroup <const> = self:GetGroup();
+    return playerGroup == groupName;
+end
+
 --- Get the player's primary job information.
 ---@return noxen.lib.bridge.player.job
 function player:GetJob()
