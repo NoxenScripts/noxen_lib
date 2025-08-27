@@ -45,7 +45,15 @@ end
 ---@param eventName string
 ---@vararg any
 function player:TriggerEvent(eventName, ...)
-    TriggerClientEvent(eventName, self.source, ...);
+    nox.events.emit.net(eventName, self.source, ...);
+    return self;
+end
+
+--- Trigger an event that will be received only by this resource for this player.
+---@param eventName string
+---@vararg any
+function player:TriggerResourceEvent(eventName, ...)
+    nox.events.emit.resource.net(eventName, self.source, ...);
     return self;
 end
 
