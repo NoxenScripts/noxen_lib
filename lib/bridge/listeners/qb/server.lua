@@ -8,6 +8,7 @@ end);
 ---@param player noxen.lib.bridge.qb.player
 bridge:AddEventHandler('qb', 'QBCore:Server:PlayerLoaded', function(player)
     bridge.playersIdentifier[player.PlayerData.license] = player.PlayerData.source;
+    nox.events.emit.resource(eLibEvents.playerLoaded, player.PlayerData.source);
 end);
 
 bridge:AddEventHandler('qb', 'QBCore:Player:SetPlayerData', function(data)
@@ -17,7 +18,7 @@ bridge:AddEventHandler('qb', 'QBCore:Player:SetPlayerData', function(data)
         return console.warn(("QBCore:Player:SetPlayerData - Player with source ^3%s^7 not found."):format(data.source));
     end
 
-    player:TriggerEvent(('noxen_lib_%s:bridge:player:setPlayerData'):format(nox.current_resource), {
+    player:TriggerResourceEvent(eLibEvents.setPlayerData, {
         identifier = player:GetIdentifier(),
         job = player:GetJob(),
         job2 = player:GetJob2(),
