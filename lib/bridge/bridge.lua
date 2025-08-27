@@ -13,6 +13,7 @@ local getPlayers <const> = GetPlayers;
 ---@field public loaded boolean
 ---@field public playersIdentifier table<string, number> Maps player identifiers to their source IDs
 ---@field public player noxen.lib.bridge.player.local
+---@field public events EventEmitter
 ---@overload fun(): noxen.lib.bridge
 local bridge <const> = nox.class.new 'noxen.lib.bridge';
 
@@ -33,6 +34,7 @@ function bridge:Constructor()
     local class <const> = not nox.is_server and require('lib.bridge.player.classes.local') or nil;
 
     self.player = class and class(self);
+    self.events = EventEmitter();
 
     console.log(("Bridge loaded successfully with framework: ^3%s^7, version: ^3%s^7"):format(self.name, self.version));
 end
@@ -95,12 +97,11 @@ end
 ---@param framework 'esx' | 'qb' | 'custom'
 ---@param name string
 ---@param handler fun(...: any)
----@return EventHandlerData
 function bridge:AddEventHandler(framework, name, handler)
     assert(type(name) == 'string', "bridge.AddEventHandler() - name must be a string");
     assert(type(handler) == 'function', "bridge.AddEventHandler() - handler must be a function");
 
-    return AddEventHandler(name, function(...)
+    return nox.events.on(name, function(_, ...)
         if (self.name ~= framework) then
             console.warn(("bridge.AddEventHandler() - Attempt to trigger %s event on %s framework"):format(name, self.name));
             return;
@@ -118,7 +119,7 @@ function bridge:RegisterNetEvent(framework, name, handler)
     assert(type(name) == 'string', "bridge.RegisterNetEvent() - name must be a string");
     assert(type(handler) == 'function', "bridge.RegisterNetEvent() - handler must be a function");
 
-    return RegisterNetEvent(name, function(...)
+    return nox.events.on.net(name, function(_, ...)
         if (self.name ~= framework) then
             console.warn(("bridge.RegisterNetEvent() - Attempt to trigger %s event on %s framework"):format(name, self.name));
             return;
@@ -267,6 +268,39 @@ function bridge:IsItemUsable(itemName)
     assert(type(itemName) == 'string', "bridge.IsItemUsable() - itemName must be a string");
 
     return self.wrapper.isItemUsable(self, itemName);
+end
+
+---@param commandName string
+---@param handler fun(source: number, args: string[], rawCommand: string)
+---@param help? string
+---@param arguments? { name: string, help: string }[]
+function bridge:AddCommand(commandName, handler, help, arguments)
+    nox.events.emit(eLibEvents.commandRegistered, commandName, handler, help, arguments);
+    RegisterCommand(commandName, handler, false);
+end
+
+---@param group string
+---@param commandName string
+---@param handler fun(source: number, args: string[], rawCommand: string)
+---@param help? string
+---@param arguments? { name: string, help: string }[]
+function bridge:AddGroupCommand(group, commandName, handler, help, arguments)
+    nox.events.emit(eLibEvents.commandRegistered, commandName, help, arguments);
+    RegisterCommand(commandName, function(source, args, rawCommand)
+        local player <const> = self:GetPlayer(source);
+
+        if (not player) then
+            return;
+        end
+
+        if (not player:HasGroup(group)) then
+            console.warn(("Player ^3%s^7 attempted to use command ^3/%s^7 without having the required group ^3%s^7"):format(player:GetIdentifier(), commandName, group));
+            player:ShowNotification("~r~You do not have permission to use this command.");
+            return;
+        end
+
+        handler(source, args, rawCommand);
+    end, false);
 end
 
 return bridge();
