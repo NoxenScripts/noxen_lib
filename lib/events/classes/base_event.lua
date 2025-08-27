@@ -50,8 +50,7 @@ end
 
 function Event:SetHandler()
 	self.handler = AddEventHandler(self.name, function(...)
-		local src = source;
-		self.callback(src, ...);
+		self.callback(...);
 	end);
 	console.debug(('Registering event ^7(^6%s^0, ^6%s^7)'):format(self.name, self.id));
 	return self;

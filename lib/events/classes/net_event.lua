@@ -9,8 +9,7 @@ end
 
 function NetEvent:SetHandler()
 	self.handler = RegisterNetEvent(self.name, function(...)
-		local src <const> = source;
-		self.callback(src, ...);
+		self.callback(...);
 	end);
 	return self;
 end

@@ -1,7 +1,12 @@
+---@class noxen.lib.events.emit.resource
+---@field public net fun(eventName: string, ...: any) | fun(eventName: string, src: number | boolean, ...: any)
+---@overload fun(eventName: string, ...: any): void
+
 ---@class noxen.lib.events.emit
 ---@field public net fun(eventName: string, ...: any) | fun(eventName: string, src: number | boolean, ...: any)
 ---@field public broadcast fun(eventName: string, ...: any): void
 ---@field public callback noxen.lib.events.emit.callback
+---@field public resource noxen.lib.events.emit.resource
 ---@overload fun(eventName: string, src: number | boolean, ...: any): void
 ---@overload fun(eventName: string, ...: any): void
 local emit <const> = table.overload(TriggerEvent, {
@@ -44,7 +49,20 @@ local emit <const> = table.overload(TriggerEvent, {
 
             return table.unpack(Citizen.Await(promise));
         end
-    });
+    }),
+    resource = table.overload(function(eventName, ...)
+        TriggerEvent(('%s_%s'):format(nox.current_resource, eventName), ...);
+    end, {
+        net = function(eventName, ...)
+            local name <const> = ('%s_%s'):format(nox.current_resource, eventName);
+
+            if (nox.is_server) then
+                TriggerClientEvent(name, ...);
+            else
+                TriggerServerEvent(name, ...);
+            end
+        end
+    })
 });
 
 return emit;
