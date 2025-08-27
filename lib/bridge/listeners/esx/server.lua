@@ -10,17 +10,20 @@ bridge:AddEventHandler('esx', 'esx:playerLoaded', function(source, xPlayer)
 
     bridge.playersIdentifier[xPlayer.license] = player.source;
 
-    player:TriggerEvent(('noxen_lib_%s:bridge:player:setPlayerData'):format(nox.current_resource), {
+    local data <const> = {
         identifier = player:GetIdentifier(),
-        job = player:GetJob(),
-        job2 = player:GetJob2(),
+        job = player:getJobInternal('job'),
+        job2 = player:getJobInternal('job2'),
         money = player:GetAccountMoney('money'),
         black_money = player:GetAccountMoney('black_money'),
         bank = player:GetAccountMoney('bank'),
         inventory = player:GetInventory(),
-    });
+    };
 
-    console.debug("ESX player loaded", xPlayer);
+    player:TriggerResourceEvent(eLibEvents.setPlayerData, data);
+    nox.events.emit.resource(eLibEvents.playerLoaded, player.source);
+
+    console.debug("ESX player loaded");
 end);
 
 bridge:AddEventHandler('esx', 'esx:playerDropped', function(source)
@@ -41,7 +44,7 @@ local function updateInventory(source)
         return;
     end
 
-    player:TriggerEvent(('noxen_lib_%s:bridge:player:setPlayerData'):format(nox.current_resource), {
+    player:TriggerResourceEvent(eLibEvents.setPlayerData, {
         inventory = player:GetInventory()
     });
 end
@@ -60,7 +63,7 @@ local function updateAccount(source, accountName)
 
     for name, account --[[ @type noxen.lib.bridge.wrapper.account ]] in pairs(bridge.wrapper.accounts) do
         if (account.name == accountName) then
-            player:TriggerEvent(('noxen_lib_%s:bridge:player:setPlayerData'):format(nox.current_resource), {
+            player:TriggerResourceEvent(eLibEvents.setPlayerData, {
                 [account.name] = player:GetAccountMoney(account.name)
             });
             return;
@@ -82,7 +85,7 @@ local function updateJob(type)
             return;
         end
 
-        player:TriggerEvent(('noxen_lib_%s:bridge:player:setPlayerData'):format(nox.current_resource), {
+        player:TriggerResourceEvent(eLibEvents.setPlayerData, {
             [type] = player:getJobInternal(type)
         });
     end
