@@ -75,7 +75,7 @@ local function emit_callback(eventName, callback, src, ...)
     increment_request_id();
 end
 
-RegisterNetEvent(eLibEvents.emitCallback, function(eventName, requests_id, ...)
+nox.events.on.net(eLibEvents.emitCallback, function(_, eventName, requests_id, ...)
     local src <const> = source;
     local args <const> = {...};
 
@@ -90,7 +90,7 @@ RegisterNetEvent(eLibEvents.emitCallback, function(eventName, requests_id, ...)
     end
 end);
 
-RegisterNetEvent(eLibEvents.receiveCallback, function(eventName, requests_id, ...)
+nox.events.on.net(eLibEvents.receiveCallback, function(_, eventName, requests_id, ...)
     if (not nox.is_server) then
         local invoking <const> = GetInvokingResource();
 
