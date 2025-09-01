@@ -10,7 +10,7 @@ eLibEvents = {
     commandRegistered = 'noxen.lib.command.registered',
     setPlayerData = 'bridge:player:setPlayerData',
     playerLoaded = 'bridge:player:playerLoaded',
-    resourceRefreshed = 'noxen_lib:bridge:resource:refreshed',
+    resourceRefreshed = 'noxen_lib:bridge:resource:refreshed'
 };
 
 return eLibEvents;

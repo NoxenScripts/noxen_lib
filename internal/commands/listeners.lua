@@ -1,11 +1,10 @@
 local registeredCommands = {};
 local commandsIndexes <const> = {};
 
-nox.events.on(eLibEvents.commandRegistered, function(_, commandName, handler, help, arguments)
+nox.events.on(eLibEvents.commandRegistered, function(_, commandName, help, arguments)
     assert(type(commandName) == 'string', 'commandName must be a string');
-    assert(is_function(handler), 'handler must be a function');
-    assert(type(help) == 'string' or help == nil, 'help must be a string or nil');
-    assert(type(arguments) == 'table' or arguments == nil, 'arguments must be a table or nil');
+    assert(type(help) == 'string' or help == nil, ('%s: help must be a string or nil'):format(commandName));
+    assert(type(arguments) == 'table' or arguments == nil, ('%s: arguments must be a table or nil'):format(commandName));
 
     local invoking <const> = GetInvokingResource();
 
