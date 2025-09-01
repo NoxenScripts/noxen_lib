@@ -90,6 +90,8 @@
 ---@field public GetIdentifier fun(source: number, identifier?: identifier): string
 ---@field public CreateUseableItem fun(itemName: string, handler: fun(source: number, item: noxen.lib.bridge.qb.item | noxen.lib.bridge.qb.item_weapon)) # Register a usable item with a handler function.
 ---@field public CanUseItem fun(itemName: string): boolean # Check if an item is registered as usable.
+---@field public HasPermission fun(source: number, permission: string): boolean # Check if a player has a specific permission.
+---@field public Notify fun(message: string, messageType?: string, length?: number) # Send a notification to a specific player.
 
 ---@class noxen.lib.qb
 ---@field public Functions noxen.lib.bridge.qb.functions

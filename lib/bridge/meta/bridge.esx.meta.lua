@@ -140,3 +140,5 @@
 ---@field public GetIdentifier fun(source: number, identifier?: identifier): string
 ---@field public RegisterUsableItem fun(itemName: string, handler: fun(source: number, itemName: string, ...: any)) # Register a usable item with a handler function.
 ---@field public GetUsableItems fun(): table<string, boolean> # Get a table of all usable items.
+---@field public ShowNotification fun(msg: string, notifyType?: string, length?: number) # Show a simple notification.
+---@field public ShowHelpNotification fun(msg: string, thisFrame?: boolean, beep?: boolean, duration?: number) # Show help notification.

@@ -38,15 +38,18 @@
 ---@field public accounts noxen.lib.bridge.wrapper.accounts # Shared accounts across frameworks.
 ---@field public getPlayer fun(bridge: noxen.lib.bridge, source: number): noxen.lib.bridge.player? # Function to get player object by source ID.
 ---@field public isItemUsable fun(bridge: noxen.lib.bridge, itemName: string): boolean # Function to check if an item is usable.
+---@field public isPVPEnabled fun(bridge: noxen.lib.bridge): boolean # Function to check if PVP is enabled on the server.
 
 ---@class noxen.lib.bridge.wrapper.client.notification
 ---@field public notify fun(message: string, type?: 'info' | 'success' | 'error', length?: number): void # Function to send a notification to the client.
+---@field public help fun(message: string, thisFrame?: boolean, beep?: boolean, duration?: number): void # Function to show a help notification to the client.
 
 ---@class noxen.lib.bridge.wrapper.client
 ---@field public notification noxen.lib.bridge.wrapper.client.notification # Client notification methods.
 
 ---@class noxen.lib.bridge.wrapper.player
 ---@field public getIdentifier fun(player: noxen.lib.bridge.player): string # Function to get the player's unique identifier.
+---@field public hasPermission fun(player: noxen.lib.bridge.player, permission: string): boolean # Function to check if the player has a specific permission.
 ---@field public job noxen.lib.bridge.wrapper.player.job
 ---@field public job2 noxen.lib.bridge.wrapper.player.job
 ---@field public notification noxen.lib.bridge.wrapper.player.notification
