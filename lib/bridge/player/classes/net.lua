@@ -63,19 +63,12 @@ function player:GetUserName()
     return GetPlayerName(self.source) or 'Unknown';
 end
 
---- Get the player's group
----@return string?
-function player:GetGroup()
-    return self.bridge.wrapper.player.getGroup(self); --- TODO : Implement for QBCore/ESX/Custom
-end
-
---- Check if the player is in the specified group
----@param groupName string
+--- Check if the player is in the specified permission
+---@param permission string
 ---@return boolean
-function player:HasGroup(groupName)
-    assert(type(groupName) == 'string', "player:hasGroup() - groupName must be a string");
-    local playerGroup <const> = self:GetGroup();
-    return playerGroup == groupName;
+function player:HasPermission(permission)
+    assert(type(permission) == 'string', "player:HasPermission() - permission must be a string");
+    return self.bridge.wrapper.player.hasPermission(self, permission);
 end
 
 --- Get the player's primary job information.
