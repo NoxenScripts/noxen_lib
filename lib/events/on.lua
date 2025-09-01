@@ -3,8 +3,8 @@ local base_event <const> = require 'lib.events.classes.base_event';
 local net_event <const> = require 'lib.events.classes.net_event';
 
 ---@class noxen.lib.events.on.resource
----@field public net fun(eventName: string, callback: fun(event: noxen.lib.events.net_event, ...: any) | fun(event: noxen.lib.events.net_event, resourceName: string, ...: any)): noxen.lib.events.net_event
----@overload fun(eventName: string, callback: fun(event: noxen.lib.events.base_event, ...: any): void | fun(event: noxen.lib.events.base_event, resourceName: string, ...: any): void): noxen.lib.events.base_event
+---@field public net fun(eventName: string, callback: fun(event: noxen.lib.events.net_event, ...: any) | fun(event: noxen.lib.events.net_event, ...: any)): noxen.lib.events.net_event
+---@overload fun(eventName: string, callback: fun(event: noxen.lib.events.base_event, ...: any): void | fun(event: noxen.lib.events.base_event, ...: any): void): noxen.lib.events.base_event
 
 ---@class noxen.lib.events.on
 ---@field public net fun(eventName: string, callback: fun(event: noxen.lib.events.net_event, ...: any) | fun(event: noxen.lib.events.net_event, ...: any)): noxen.lib.events.net_event
