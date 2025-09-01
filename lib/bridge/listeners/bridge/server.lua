@@ -14,7 +14,7 @@ nox.events.on(eCitizenFXEvents.onResourceStart, function (_, resource)
             goto continue;
         end
 
-        players[i]:TriggerResourceEvent(eLibEvents.setPlayerData, {
+        players[i]:TriggerResourceEvent(eLibEvents.playerLoaded, {
             identifier = players[i]:GetIdentifier(),
             job = players[i]:GetJob(),
             job2 = players[i]:GetJob2(),
@@ -30,3 +30,8 @@ nox.events.on(eCitizenFXEvents.onResourceStart, function (_, resource)
     nox.events.emit(eLibEvents.resourceRefreshed);
     console.debug(("Resource ^3%s^7 started, player data synced"):format(resource));
 end);
+
+bridge:AddPermissionCommand('admin', ('noxen:%s:state'):format(nox.current_resource), function(player, args, showNotification)
+    local version <const> = GetResourceMetadata(nox.name, 'version', 0);
+    showNotification(('Resource is running using ^3noxen_lib^7 version ^3%s^7, framework: ^3%s^7 version ^3%s^7'):format(version or 'unknown', bridge.name, bridge.version), 'info');
+end, "Toggle debug state", { { name = "state", help = "on/off" } }, true);
