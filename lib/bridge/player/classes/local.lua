@@ -87,7 +87,17 @@ end
 ---@param type? 'error' | 'info' | 'success'
 ---@param length? number
 function player:ShowNotification(message, type, length)
-    self.bridge.wrapper.client.notification.notify(self, message, type, length);
+    self.bridge.wrapper.client.notification.notify(self.bridge, message, type, length);
+    return self;
+end
+
+--- Show a help notification to the player.
+---@param message string
+---@param thisFrame? boolean
+---@param beep? boolean
+---@param duration? number
+function player:ShowHelpNotification(message, thisFrame, beep, duration)
+    self.bridge.wrapper.client.notification.help(self.bridge, message, thisFrame, beep, duration);
     return self;
 end
 
