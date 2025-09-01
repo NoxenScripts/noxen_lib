@@ -50,8 +50,9 @@ end
 ---@param tbl table
 ---@param callback fun(key: string | number, value: any): boolean
 ---@param single boolean
+---@return table | any | nil
 function table.filter(tbl, callback, single)
-    local new = {};
+    local new = not single and {};
     for key, value in pairs(tbl) do
         if (callback(key, value)) then
             if (single) then
@@ -61,7 +62,19 @@ function table.filter(tbl, callback, single)
             end
         end
     end
-    return single and nil or not single and new;
+    return ((single and nil) or (not single and new)) or nil;
+end
+
+---@param tbl table
+---@param value any
+---@return boolean
+function table.contains(tbl, value)
+    for _, v in pairs(tbl) do
+        if (v == value) then
+            return true;
+        end
+    end
+    return false;
 end
 
 ---@param tbl table
