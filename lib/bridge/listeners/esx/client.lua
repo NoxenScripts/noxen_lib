@@ -30,17 +30,29 @@ bridge:AddEventHandler('esx', 'esx:setPlayerData', function(key, value)
 end);
 
 nox.events.on.secure('ox_inventory:updateSlots', function(_, data)
+    local inventory <const> = table.clone(bridge.player.data['inventory']);
     bridge.player.data['inventory'] = {};
+
+    console.debug(('(^3ox_inventory^7) Received inventory update with ^3%s^7 items. Old inventory had ^3%s^7 items.'):format(#data, #inventory));
 
     for i = 1, #data do
         if (data[i].inventory ~= nox.bridge.player.source) then
             goto continue;
         end
+
+        local exists <const> = table.filter(inventory, function(_, item)
+            return item.name == data[i].item.name;
+        end, true);
+
+        if (exists ~= nil) then
+            exists.amount = data[i].item and type(data[i].item.count) == 'number' and data[i].item.count or items[i].amount;
+        end
+
         bridge.player.data['inventory'][#bridge.player.data['inventory'] + 1] = data[i].item and data[i].item.name and {
             name = data[i].item.name,
             label = data[i].item.label,
             weight = data[i].item.weight,
-            amount = type(data[i].item.count) == 'number' and data[i].item.count or items[i].amount,
+            amount = type(data[i].item.count) == 'number' and data[i].item.count or data[i].amount,
             usable = type(data[i].item.usable) == 'boolean' and data[i].item.usable == true
         } or nil;
         ::continue::
