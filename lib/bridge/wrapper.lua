@@ -32,11 +32,23 @@ local methods <const> = {
             local usableItems <const> = bridge.framework.GetUsableItems();
             return usableItems[itemName] == true;
         end,
+        ---@param bridge noxen.lib.bridge
+        ---@return boolean
+        isPVPEnabled = function(bridge)
+            local config <const> = bridge.framework.GetConfig();
+            return (config and config.EnablePVP == true) or false;
+        end,
         player = {
             ---@param player noxen.lib.bridge.player
             ---@return string
             getIdentifier = function(player)
                 return player.handle.license;
+            end,
+            ---@param player noxen.lib.bridge.player
+            ---@param permission string (e.g "admin")
+            ---@return string?
+            hasPermission = function(player, permission)
+                return player.handle.getGroup() == permission;
             end,
             job = {
                 ---@param player noxen.lib.bridge.player
@@ -158,14 +170,20 @@ local methods <const> = {
         },
         client = {
             notification = {
+                ---@param bridge noxen.lib.bridge
                 ---@param message string
                 ---@param type? 'info' | 'success' | 'error'
                 ---@param length? number
-                notify = function(message, type, length)
-                    ESX.ShowNotification(message, type, length);
-                    BeginTextCommandDisplayText('STRING');
-                    AddTextComponentSubstringPlayerName(message);
-                    EndTextCommandDisplayText(0.5, 0.5);
+                notify = function(bridge, message, type, length)
+                    bridge.framework.ShowNotification(message, type, length);
+                end,
+                ---@param bridge noxen.lib.bridge
+                ---@param message string
+                ---@param thisFrame boolean
+                ---@param beep boolean
+                ---@param duration number
+                help = function(bridge, message, thisFrame, beep, duration)
+                    bridge.framework.ShowHelpNotification(message, thisFrame, beep, duration);
                 end
             }
         }
@@ -202,11 +220,24 @@ local methods <const> = {
         isItemUsable = function(bridge, itemName)
             return bridge.framework.Functions.CanUseItem(itemName) ~= nil;
         end,
+        ---@param bridge noxen.lib.bridge
+        ---@return boolean
+        isPVPEnabled = function(bridge)
+            local config <const> = bridge.framework.Config;
+            return (config and config.Server and config.Server.PVP == true) or false;
+        end,
         player = {
             ---@param player noxen.lib.bridge.player
             ---@return string
             getIdentifier = function(player)
                 return player.handle.PlayerData.license;
+            end,
+            ---@param player noxen.lib.bridge.player
+            ---@param permission string (e.g "admin")
+            ---@return string?
+            hasPermission = function(player, permission)
+                --return player.bridge.framework.Functions.HasPermission(player.source, permission);
+                return IsPlayerAceAllowed(player.source, permission);
             end,
             job = {
                 ---@param player noxen.lib.bridge.player
@@ -323,17 +354,38 @@ local methods <const> = {
                 ---@param reason? string
                 remove = function(player, itemName, amount, reason)
                     assert(GetResourceState('qb-inventory') == 'started', "QB-Inventory resource is not started.");
-                    return exports['qb-inventory']:RemoveItem(identifier, item, amount, nil, reason);
+                    return exports['qb-inventory']:RemoveItem(player.source, itemName, amount, nil, reason);
                 end
             }
         },
         client = {
             notification = {
+                ---@param bridge noxen.lib.bridge
                 ---@param message string
                 ---@param type? 'info' | 'success' | 'error'
                 ---@param length? number
-                notify = function(message, type, length)
-                    QBCore.Functions.Notify(message, type, length);
+                notify = function(bridge, message, type, length)
+                    bridge.framework.Functions.Notify(message, type, length);
+                end,
+                ---@param bridge noxen.lib.bridge
+                ---@param message string
+                ---@param thisFrame boolean
+                ---@param beep boolean
+                ---@param duration number
+                help = function(bridge, message, thisFrame, beep, duration)
+                    ---[[
+                    --- @credit ESX Framework (https://github.com/esx-framework/esx_core/blob/main/%5Bcore%5D/es_extended/client/functions.lua#L196)
+                    ---]]
+
+                    local entry <const> = "noxen..notify.help";
+
+                    AddTextEntry(entry, message);
+                    if (thisFrame) then
+                        DisplayHelpTextThisFrame(entry, false);
+                        return;
+                    end
+                    BeginTextCommandDisplayHelp(entry);
+                    EndTextCommandDisplayHelp(0, false, beep == nil or beep, duration or -1);
                 end
             }
         }

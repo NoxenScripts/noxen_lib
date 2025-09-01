@@ -49,11 +49,22 @@ local methods <const> = {
     isItemUsable = function(bridge, itemName)
         return false;
     end,
+    ---@param bridge noxen.lib.bridge
+    ---@return boolean
+    isPVPEnabled = function(bridge)
+        return true;
+    end,
     player = {
         ---@param player noxen.lib.bridge.player
         ---@return string
         getIdentifier = function(player)
             return nil;
+        end,
+        ---@param player noxen.lib.bridge.player
+        ---@param permission string (e.g "admin")
+        ---@return string?
+        hasPermission = function(player, permission)
+            return false; -- Custom implementation needed
         end,
         job = {
             ---@param player noxen.lib.bridge.player
@@ -156,7 +167,7 @@ local methods <const> = {
             remove = function(player, itemName, amount, reason)
                 return nil; -- Custom implementation needed
             end
-        end
+        }
     },
     client = {
         notification = {
@@ -167,6 +178,26 @@ local methods <const> = {
                 BeginTextCommandDisplayText('STRING');
                 AddTextComponentSubstringPlayerName(message);
                 EndTextCommandDisplayText(0.5, 0.5);
+            end,
+            ---@param bridge noxen.lib.bridge
+            ---@param message string
+            ---@param thisFrame boolean
+            ---@param beep boolean
+            ---@param duration number
+            help = function(bridge, message, thisFrame, beep, duration)
+                ---[[
+                --- @credit ESX Framework (https://github.com/esx-framework/esx_core/blob/main/%5Bcore%5D/es_extended/client/functions.lua#L196)
+                ---]]
+
+                local entry <const> = "noxen..notify.help";
+
+                AddTextEntry(entry, message);
+                if (thisFrame) then
+                    DisplayHelpTextThisFrame(entry, false);
+                    return;
+                end
+                BeginTextCommandDisplayHelp(entry);
+                EndTextCommandDisplayHelp(0, false, beep == nil or beep, duration or -1);
             end
         }
     }

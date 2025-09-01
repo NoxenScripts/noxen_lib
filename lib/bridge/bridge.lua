@@ -270,36 +270,75 @@ function bridge:IsItemUsable(itemName)
     return self.wrapper.isItemUsable(self, itemName);
 end
 
----@param commandName string
----@param handler fun(source: number, args: string[], rawCommand: string)
----@param help? string
----@param arguments? { name: string, help: string }[]
-function bridge:AddCommand(commandName, handler, help, arguments)
-    nox.events.emit(eLibEvents.commandRegistered, commandName, handler, help, arguments);
-    RegisterCommand(commandName, handler, false);
+--- <h3>Both(Client/Server) Authority</h3>
+--- Check if PVP is enabled on the server.
+---@return boolean
+function bridge:IsPVPEnabled()
+    return self.wrapper.isPVPEnabled(self);
 end
 
----@param group string
 ---@param commandName string
----@param handler fun(source: number, args: string[], rawCommand: string)
+---@param handler fun(player: noxen.lib.bridge.player | false, args: string[], showNotification: fun(message: string, type?: 'info' | 'error' | 'success'): void)
 ---@param help? string
 ---@param arguments? { name: string, help: string }[]
-function bridge:AddGroupCommand(group, commandName, handler, help, arguments)
+function bridge:AddCommand(commandName, handler, help, arguments, allowConsole)
     nox.events.emit(eLibEvents.commandRegistered, commandName, help, arguments);
-    RegisterCommand(commandName, function(source, args, rawCommand)
+    RegisterCommand(commandName, function(source, args)
         local player <const> = self:GetPlayer(source);
 
-        if (not player) then
+        if (source == 0 and not allowConsole) then
+            console.warn(("This command ^3/%s^7 cannot be run from console."):format(commandName));
             return;
         end
 
-        if (not player:HasGroup(group)) then
-            console.warn(("Player ^3%s^7 attempted to use command ^3/%s^7 without having the required group ^3%s^7"):format(player:GetIdentifier(), commandName, group));
+        if (not player and not allowConsole) then
+            return;
+        end
+
+        handler(player ~= nil and player or false, args, function(message, type)
+            if (player) then
+                player:ShowNotification(message:gsub("%^%d", ""), type);
+            else
+                console[(not type or type == 'info' and 'log') or type](message);
+            end
+        end);
+        console.debug(("Command ^3/%s^7 executed by ^3%s^7 with args: ^3%s^7"):format(commandName, player and player:GetIdentifier() or 'Console', #args > 0 and table.concat(args, ', ') or 'no arguments'));
+    end, false);
+end
+
+---@param permission string
+---@param commandName string
+---@param handler fun(player: noxen.lib.bridge.player | false, args: string[], showNotification: fun(message: string, type?: 'info' | 'error' | 'success'): void)
+---@param help? string
+---@param arguments? { name: string, help: string }[]
+function bridge:AddPermissionCommand(permission, commandName, handler, help, arguments, allowConsole)
+    nox.events.emit(eLibEvents.commandRegistered, commandName, help, arguments);
+    RegisterCommand(commandName, function(source, args)
+        local player <const> = self:GetPlayer(source);
+
+        if (source == 0 and not allowConsole) then
+            console.warn(("This command ^3/%s^7 cannot be run from console."):format(commandName));
+            return;
+        end
+
+        if (not player and not allowConsole) then
+            return;
+        end
+
+        if (player and not player:HasPermission(permission)) then
+            console.warn(("Player ^3%s^7 attempted to use command ^3/%s^7 without having the required permission ^3%s^7"):format(player:GetIdentifier(), commandName, permission));
             player:ShowNotification("~r~You do not have permission to use this command.");
             return;
         end
 
-        handler(source, args, rawCommand);
+        handler(player ~= nil and player or false, args, function(message, type)
+            if (player) then
+                player:ShowNotification(message:gsub("%^%d", ""), type);
+            else
+                console[(not type or type == 'info' and 'log') or type](message);
+            end
+        end);
+        console.debug(("Permission command ^3/%s^7 executed by ^3%s^7 with args: ^3%s^7"):format(commandName, player and player:GetIdentifier() or 'Console', #args > 0 and table.concat(args, ', ') or 'no arguments'));
     end, false);
 end
 
