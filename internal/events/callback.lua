@@ -81,6 +81,12 @@ nox.events.on.net(eLibEvents.emitCallback, function(_, eventName, requests_id, .
 
     if (nox.is_server) then
         safe_callback(eventName, callbacks[eventName], src, function(...)
+            console.debug(('Sent callback response to ^3%s^7 for event ^7(^3%s^7)^0 with request id ^7(^6%s^7) args:^2%s^0'):format(
+                src or 'N/A',
+                eventName or 'N/A',
+                requests_id or 'N/A',
+                json.encode({...}) or 'with no arguments'
+            ));
             nox.events.emit.net(eLibEvents.receiveCallback, src, eventName, requests_id, ...);
         end, table.unpack(args));
     else
@@ -97,6 +103,11 @@ nox.events.on.net(eLibEvents.receiveCallback, function(_, eventName, requests_id
         if (invoking ~= nil) then
             nox.game.crash(eLibEvents.receiveCallback);
         end
+        console.debug(('Received callback response for event ^7(^3%s^7)^0 with request id ^7(^6%s^7) args:^2%s^0'):format(
+            eventName or 'nil',
+            requests_id or 'N/A',
+            json.encode({...}) or 'with no arguments'
+        ));
     end
 
     safe_callback(eventName, requests[requests_id], ...);
