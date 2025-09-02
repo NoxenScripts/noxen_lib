@@ -27,7 +27,7 @@ nox.events.on(eCitizenFXEvents.onResourceStart, function (_, resource)
         ::continue::
     end
 
-    nox.events.emit(eLibEvents.resourceRefreshed);
+    nox.events.emit(eLibEvents.resourceStarted);
     console.debug(("Resource ^3%s^7 started, player data synced"):format(resource));
 end);
 

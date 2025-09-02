@@ -50,8 +50,8 @@ nox.events.on.resource(eLibEvents.playerLoaded, function(_, source)
     console.debug(("Player ^3%s^7 loaded, chat suggestions synced"):format(source));
 end);
 
-nox.events.on(eLibEvents.resourceRefreshed, function(_)
+nox.events.on(eLibEvents.resourceStarted, function(_)
     local resource <const> = GetInvokingResource();
     nox.events.emit.broadcast('chat:addSuggestions', commandsIndexes);
-    console.debug(("Resource ^3%s^7 refreshed, chat suggestions synced"):format(resource));
+    console.debug(("Resource ^3%s^7 started, chat suggestions synced"):format(resource));
 end);
