@@ -69,7 +69,7 @@ local methods <const> = {
                 ---@return noxen.lib.bridge.esx.job?
                 get = function(player)
                     if (not player.handle.getJob2) then
-                        console.warn("Player handle does not support getJob2 method.");
+                        console.debug("Player handle does not support getJob2 method.");
                         return nil;
                     end
 
@@ -81,7 +81,7 @@ local methods <const> = {
                 ---@param onDuty? boolean
                 set = function(player, job, grade, onDuty)
                     if (not player.handle.setJob2) then
-                        console.warn("Player handle does not support setJob2 method.");
+                        console.debug("Player handle does not support setJob2 method.");
                         return;
                     end
 
@@ -258,7 +258,7 @@ local methods <const> = {
                 ---@return noxen.lib.bridge.qb.job?
                 get = function(player)
                     if (not player.handle.PlayerData.gang) then
-                        console.warn("Player handle does not support gang data.");
+                        console.debug("Player handle does not support gang data.");
                         return nil;
                     end
 
@@ -270,7 +270,7 @@ local methods <const> = {
                 ---@param onDuty? boolean
                 set = function(player, job, grade, onDuty)
                     if (not player.handle.Functions.SetGang) then
-                        console.warn("Player handle does not support SetGang method.");
+                        console.debug("Player handle does not support SetGang method.");
                         return;
                     end
 
