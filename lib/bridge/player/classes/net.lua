@@ -19,7 +19,7 @@ end
 ---@param jobType 'job' | 'job2'
 function player:getJobInternal(jobType)
     local data <const> = self.bridge.wrapper.player[jobType].get(self);
-    local isQBGrade <const> = type(data.grade) == 'table';
+    local isQBGrade <const> = data and type(data.grade) == 'table';
 
     return data and {
         name = data.name,
