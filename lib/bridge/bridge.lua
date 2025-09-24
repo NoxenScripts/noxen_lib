@@ -335,7 +335,14 @@ function bridge:AddPermissionCommand(permission, commandName, handler, help, arg
             if (player) then
                 player:ShowNotification(message:gsub("%^%d", ""), type);
             else
-                console[(not type or type == 'info' and 'log') or type](message);
+                local cType <const> = (not type or type == 'info' and 'log') or type;
+
+                if (console[cType]) then
+                    console[cType](message);
+                    return;
+                end
+
+                console.log(message);
             end
         end);
         console.debug(("Permission command ^3/%s^7 executed by ^3%s^7 with args: ^3%s^7"):format(commandName, player and player:GetIdentifier() or 'Console', #args > 0 and table.concat(args, ', ') or 'no arguments'));
