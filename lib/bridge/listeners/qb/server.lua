@@ -18,7 +18,7 @@ bridge:AddEventHandler('qb', 'QBCore:Player:SetPlayerData', function(data)
         return console.warn(("QBCore:Player:SetPlayerData - Player with source ^3%s^7 not found."):format(data.source));
     end
 
-    player:TriggerResourceEvent(eLibEvents.setPlayerData, {
+    local data <const> = {
         identifier = player:GetIdentifier(),
         job = player:GetJob(),
         job2 = player:GetJob2(),
@@ -26,7 +26,9 @@ bridge:AddEventHandler('qb', 'QBCore:Player:SetPlayerData', function(data)
         black_money = player:GetAccountMoney('black_money'),
         bank = player:GetAccountMoney('bank'),
         inventory = player:GetInventory()
-    });
+    };
+
+    player:TriggerResourceEvent(eLibEvents.playerLoaded, data);
 end);
 
 bridge:AddEventHandler('qb', 'QBCore:Server:OnPlayerUnload', function(source)

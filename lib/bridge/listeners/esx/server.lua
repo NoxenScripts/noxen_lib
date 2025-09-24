@@ -20,8 +20,7 @@ bridge:AddEventHandler('esx', 'esx:playerLoaded', function(source, xPlayer)
         inventory = player:GetInventory(),
     };
 
-    player:TriggerResourceEvent(eLibEvents.setPlayerData, data);
-    nox.events.emit.resource(eLibEvents.playerLoaded, player.source);
+    player:TriggerResourceEvent(eLibEvents.playerLoaded, player.source, data);
 
     console.debug("ESX player loaded");
 end);
