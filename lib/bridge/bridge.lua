@@ -261,13 +261,21 @@ end
 
 --- <h3>Server Authority</h3>
 --- Check if an item is registered as usable.
----@param itemName string
+---@param item string | { name: string }
 ---@return boolean
-function bridge:IsItemUsable(itemName)
+function bridge:IsItemUsable(item)
     assert(nox.is_server, 'noxen.lib.bridge.IsItemUsable is not available on client.');
-    assert(type(itemName) == 'string', "bridge.IsItemUsable() - itemName must be a string");
+    assert(
+        type(item) == 'string'
+        or (type(item) == 'table' and type(item.name) == 'string'),
+        "bridge.IsItemUsable() - item must be a string or table with .name"
+    );
 
-    return self.wrapper.isItemUsable(self, itemName);
+    if (type(item) ~= 'string') then
+        item = item.name;
+    end
+
+    return self.wrapper.isItemUsable(self, item);
 end
 
 --- <h3>Both(Client/Server) Authority</h3>
