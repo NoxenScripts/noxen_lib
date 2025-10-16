@@ -11,9 +11,12 @@ version '1.0.0';
 shared_script 'imports.lua';
 shared_script 'internal/index.lua';
 
+ui_page 'ui/ui.html';
+
 files {
     'internal/**',
     'system/**',
     'enums/**',
     'lib/**',
+    'ui/**'
 };

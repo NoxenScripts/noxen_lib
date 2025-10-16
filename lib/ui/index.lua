@@ -63,6 +63,10 @@ if (not nox.is_server) then
 
     nox.ui.visual = require 'lib.ui.components.visual';
 
+    local progress <const> = require 'lib.ui.components.progressBar';
+
+    nox.ui.ProgressBar = progress.ProgressBar;
+    nox.ui.CancelProgressBar = progress.CancelProgressBar;
 end
 
 return nox.ui;

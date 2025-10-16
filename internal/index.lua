@@ -4,3 +4,4 @@ require 'internal.game.index';
 require 'internal.commands.index';
 
 require 'internal.overrides.index';
+require 'internal.ui.index';
