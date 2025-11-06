@@ -1,0 +1,50 @@
+#progress-bar-container {
+    position: fixed;
+    bottom: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#progress-bar-container.visible {
+    opacity: 1;
+}
+
+.progress-bar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.progress-bar-text {
+    color: rgba(255, 255, 255, 1);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.03125rem;
+    text-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.8), 0 0 0.625rem rgba(0, 0, 0, 0.6);
+    white-space: nowrap;
+}
+
+.progress-bar-track {
+    width: 18.75rem;
+    height: 0.5rem;
+    background: rgba(0, 0, 0, 0.6);
+    border: 0.125rem solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.6);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    border-radius: 0.125rem;
+    width: 0%;
+    transition: width 0.05s linear;
+    box-shadow: 0 0 0.625rem rgba(255, 255, 255, 0.4);
+}
+
