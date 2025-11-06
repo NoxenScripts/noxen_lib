@@ -1,19 +1,24 @@
----@param options { label?: string, time?: number, icon?: string, style?: 'rectangle' | 'circle', position?: 'bottom' | 'center' }
+---@async
+---@param options { text?: string, time?: number }
 local function ProgressBar(options)
-    return exports[nox.name]:ProgressBar(
-        options.label or "Progress",
+    return exports[nox.name]:ShowProgressBar(
         options.time or 1000,
-        options.icon or "🔄",
-        options.style or 'rectangle',
-        options.position or 'bottom'
+        options.text or "Progress"
     );
 end
 
+---@return boolean
 local function CancelProgressBar()
     return exports[nox.name]:CancelProgressBar();
+end
+
+---@return boolean
+local function IsProgressBarActive()
+    return exports[nox.name]:IsProgressBarActive();
 end
 
 return {
     ProgressBar = ProgressBar,
     CancelProgressBar = CancelProgressBar,
+    IsProgressBarActive = IsProgressBarActive
 };

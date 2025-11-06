@@ -67,6 +67,7 @@ if (not nox.is_server) then
 
     nox.ui.ProgressBar = progress.ProgressBar;
     nox.ui.CancelProgressBar = progress.CancelProgressBar;
+    nox.ui.IsProgressBarActive = progress.IsProgressBarActive;
 end
 
 return nox.ui;

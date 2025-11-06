@@ -1,68 +1,82 @@
-local showing, canceled = false, false;
+if (nox.is_server) then
+    return;
+end
 
-exports('ProgressBar', function(label, time, icon, style, position)
-    if (showing) then
+local active, complete, cancelled = false, false, false;
+
+---@param duration number Duration in milliseconds
+---@param text string Text to display on the progress bar
+local function show(duration, text)
+    if (active) then
         return false;
     end
 
-    showing = true;
+    active, complete, cancelled = true, false, false;
 
     SendNUIMessage({
-        action = 'showProgress',
-        data = {
-            label = label,
-            value = 0,
-            icon = icon,
-            style = style or 'rectangle',
-            position = position or 'bottom'
+        type = 'progressBar:show',
+        payload = {
+            duration = duration,
+            text = text
         }
     });
 
-    local startTime = GetGameTimer()
-    local endTime = startTime + time
+    local startTime <const> = GetGameTimer();
+    local endTime <const> = startTime + duration;
 
-    CreateThread(function()
-        while showing and not canceled do
-            local now <const> = GetGameTimer();
+    local promise <const> = promise.new();
 
-            local progress = (now - startTime) / time;
-
-            if (progress > 1.0) then
-                progress = 1.0;
+    async(function()
+        while (active and GetGameTimer() < endTime) do
+            if (complete or cancelled) then
+                break;
             end
-
-            value = progress * 100;
-
-            SendNUIMessage({
-                action = 'updateProgress',
-                data = {
-                    value = value
-                }
-            });
-
-            if (progress >= 1.0) then
-                showing = false;
-            end
-
-            Wait(100);
+            async.wait(10);
         end
-
-        showing = false;
-
-        SendNUIMessage({
-            action = 'hideProgress'
-        });
-
-        if (not canceled) then
-            return true;
-        end
-
-        canceled = false;
-
-        return false;
+        promise:resolve();
     end);
+
+    Citizen.Await(promise);
+
+    active = false;
+
+    if (cancelled) then
+        cancelled = false;
+        return false;
+    end
+
+    return true;
+end
+
+local function cancel()
+    if (not active) then
+        return false;
+    end
+
+    cancelled, active = true, false;
+
+    SendNUIMessage({
+        type = 'progressBar:cancel',
+        payload = {}
+    });
+
+    return true;
+end
+
+local function isActive()
+    return active;
+end
+
+RegisterNUICallback('progressComplete', function(data, cb)
+    complete = true;
+    cb('ok');
 end);
 
-exports('CancelProgressBar', function()
-    canceled = true;
+RegisterNUICallback('progressCancelled', function(data, cb)
+    cancelled = true;
+    cb('ok');
 end);
+
+exports('ShowProgressBar', show);
+exports('CancelProgressBar', cancel);
+exports('IsProgressBarActive', isActive);
