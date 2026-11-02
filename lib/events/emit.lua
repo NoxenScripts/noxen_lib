@@ -41,13 +41,15 @@ local emit <const> = table.overload(TriggerEvent, {
         ---@vararg any
         ---@return any
         await = function(eventName, src, ...)
-            local promise <const> = promise.new();
+            local pending <const> = promise.new();
 
             exports['noxen_lib']:emit_callback(eventName, function(...)
-                promise:resolve({...});
+                pending:resolve(table.pack(...));
             end, src, ...);
 
-            return table.unpack(Citizen.Await(promise));
+            local result <const> = Citizen.Await(pending);
+
+            return table.unpack(result, 1, result.n);
         end
     }),
     resource = table.overload(function(eventName, ...)

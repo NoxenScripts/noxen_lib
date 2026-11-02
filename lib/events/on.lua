@@ -46,7 +46,7 @@ end, {
                     local invoking <const> = GET_INVOKING_RESOURCE();
 
                     if (invoking ~= nil) then
-                        nox.game.crash(eventName);
+                        console.warn(('Blocked secure event ^3%s^7 triggered by ^3%s^7'):format(eventName, invoking));
                         return;
                     end
                     nox.events.safe_callback(eventName, callback, event, ...);
@@ -73,7 +73,7 @@ end, {
                 else
                     local invoking <const> = GET_INVOKING_RESOURCE();
                     if (invoking ~= nox.name) then
-                        nox.game.crash(('[Internal] > %s'):format(eventName));
+                        console.warn(('Blocked internal event ^3%s^7 triggered by ^3%s^7'):format(eventName, tostring(invoking)));
                         return;
                     end
                     nox.events.safe_callback(eventName, callback, event, ...);

@@ -8,6 +8,6 @@ nox.config.default = {};
 nox.config.class.config = require 'lib.config.classes.Config';
 nox.config.register = require 'lib.config.register';
 
-Config = nox.config.register('Global');
+Config = Config or nox.config.register('Global');
 
 return nox.config;

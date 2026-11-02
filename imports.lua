@@ -108,4 +108,48 @@ nox.classes.list = require 'system.modules.classes.List';
 nox.classes.map = require 'system.modules.classes.Map';
 nox.classes.color = require 'system.modules.classes.Color';
 
-require 'lib.index';
+require 'lib.overrides.index';
+
+local lazy_modules <const> = {
+    config = 'lib.config.index',
+    resource = 'lib.resource.index',
+    convar = 'lib.convar.index',
+    color = 'lib.color.index',
+    events = 'lib.events.index',
+    game = 'lib.game.index',
+    entity = 'lib.entity.index',
+    ui = 'lib.ui.index',
+    bridge = 'lib.bridge.index',
+    target = 'lib.target.index',
+};
+
+setmetatable(nox, {
+    __index = function(self, key)
+        local path <const> = lazy_modules[key];
+
+        if (not path) then
+            return nil;
+        end
+
+        local previous <const> = current_resource;
+
+        current_resource = nox.name;
+
+        local success <const>, result <const> = pcall(require, path);
+
+        current_resource = previous;
+
+        if (not success) then
+            return error(result, 0);
+        end
+
+        rawset(self, key, result);
+        return result;
+    end
+});
+
+nox.set_required_resource();
+
+if (nox.current_resource ~= nox.name) then
+    local _ <const> = nox.bridge;
+end
