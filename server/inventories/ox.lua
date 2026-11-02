@@ -25,4 +25,12 @@ Bridge.inventories.ox = {
         local data = exports.ox_inventory:Items(item)
         return data and { name = data.name, label = data.label, weight = data.weight } or nil
     end,
+
+    registerStash = function(id, label, slots, weight, coords)
+        exports.ox_inventory:RegisterStash(id, label, slots, weight, false, { noxen_private = 100 }, coords)
+    end,
+
+    openStash = function(source, id)
+        return exports.ox_inventory:forceOpenInventory(source, 'stash', id) ~= nil
+    end,
 }

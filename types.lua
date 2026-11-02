@@ -75,6 +75,8 @@
 ---@field remove fun(source: integer, item: string, count: integer, metadata?: table, reason: string): boolean
 ---@field canCarry fun(source: integer, item: string, count: integer, metadata?: table): boolean
 ---@field getItem fun(item: string): NoxenItem?
+---@field registerStash? fun(id: string, label: string, slots: integer, weight: integer, coords?: vector3)
+---@field openStash? fun(source: integer, id: string, label: string, slots: integer, weight: integer): boolean
 
 ---@class NoxenClientFrameworkAdapter
 ---@field isLoaded fun(): boolean

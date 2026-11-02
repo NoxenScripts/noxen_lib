@@ -476,6 +476,45 @@ RegisterNetEvent(SYNC_REQUEST_EVENT, function()
     end
 end)
 
+---@return boolean
+local function supportsStash()
+    return inventory.openStash ~= nil
+end
+
+---@param id string
+---@param label string
+---@param slots integer
+---@param weight integer
+---@param coords? vector3
+---@return boolean
+local function registerStash(id, label, slots, weight, coords)
+    if not supportsStash() or type(id) ~= 'string' then
+        return false
+    end
+
+    return attempt('registerStash', function()
+        inventory.registerStash(id, label, slots, weight, coords)
+        return true
+    end)
+end
+
+---@param source integer
+---@param id string
+---@param label string
+---@param slots integer
+---@param weight integer
+---@return boolean
+local function openStash(source, id, label, slots, weight)
+    if not supportsStash() or type(id) ~= 'string' or not isValidSource(source) then
+        return false
+    end
+
+    return attempt('openStash', inventory.openStash, source, id, label, slots, weight)
+end
+
+exports('SupportsStash', supportsStash)
+exports('RegisterStash', registerStash)
+exports('OpenStash', openStash)
 exports('GetFramework', getFramework)
 exports('GetInventory', getInventory)
 exports('GetPlayer', getPlayer)

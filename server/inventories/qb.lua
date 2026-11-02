@@ -51,4 +51,11 @@ Bridge.inventories.qb = {
         local data = getSharedItem(item)
         return data and { name = data.name, label = data.label, weight = data.weight } or nil
     end,
+
+    registerStash = function() end,
+
+    openStash = function(source, id, label, slots, weight)
+        exports['qb-inventory']:OpenInventory(source, id, { label = label, maxweight = weight, slots = slots })
+        return true
+    end,
 }
